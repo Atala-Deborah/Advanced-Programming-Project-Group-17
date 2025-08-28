@@ -61,8 +61,8 @@ composer install
 npm install
 ```
 
-3. Create environment file
-This will be shared in the group but you can as well create your own in the project directory using
+3. Create environment file. (This will be shared in the group but you can as well create your own in the project directory using)
+
 ```bash
 cp .env.example .env
 ```
@@ -82,8 +82,7 @@ DB_USERNAME=root
 DB_PASSWORD=ap.capstone
 ```
 
-6. Create SQLite database file
-This is if it doesn't exit already in capstone-app/database
+6. Create SQLite database file. (This is if it doesn't exist already in capstone-app/database)
 ```bash
 type nul > database/database.sqlite
 ```
