@@ -110,3 +110,22 @@ Your application should now be running at `http://localhost:8000`
 - If you encounter any permissions issues, run commands as administrator
 - Make sure MySQL service is running before migrations
 - Check that all required PHP extensions are enabled in php.ini
+
+## FRONTEND DEVELOPMENT GUIDE
+Key Frontend Locations:
+`Views: resources/views/`
+`CSS: resources/css/app.css`
+`JavaScript: resources/js/app.js`
+`Assets: public/`
+
+### Development Server
+Run Vite development server to compile and hot-reload assets:
+
+```bash
+npm run dev
+```
+Production Build
+
+```bash
+npm run build
+```
