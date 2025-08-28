@@ -36,45 +36,43 @@ This guide will help you set up and run the Laravel project on **Windows** using
 
 ---
 
-### Step 1: Clone the repo
+### Clone the repo
 
 Open **Command Prompt** or **PowerShell** and run:
 
 ```bash
 git clone https://github.com/Atala-Deborah/Advanced-Programming-Project-Group-17.git
-cd Advanced-Programming-Project-Group-17
-
-
-### Installation Steps
-
-1. Clone the repository
-```bash
-git clone https://github.com/Atala-Deborah/Advanced-Programming-Project-Group-17.git
-cd Advanced-Programming-Project-Group-17
 ```
 
-2. Install PHP dependencies
+```bash
+cd Advanced-Programming-Project-Group-17/capstone-app
+```
+
+### Dependency Installations
+
+
+1. Install PHP dependencies
 ```bash
 composer install
 ```
 
-3. Install NPM packages
+2. Install NPM packages
 ```bash
 npm install
 ```
 
-4. Create environment file
+3. Create environment file
 This will be shared in the group but you can as well create your own in the project directory using
 ```bash
 cp .env.example .env
 ```
 
-5. Generate application key
+4. Generate application key
 ```bash
 php artisan key:generate
 ```
 
-6. Configure database in `.env` file
+5. Configure database in `.env` file
 ```
 DB_CONNECTION=sqlite
 DB_HOST=127.0.0.1
@@ -84,18 +82,18 @@ DB_USERNAME=root
 DB_PASSWORD=ap.capstone
 ```
 
-7. Create SQLite database file
+6. Create SQLite database file
 This is if it doesn't exit already in capstone-app/database
 ```bash
 type nul > database/database.sqlite
 ```
 
-8. Start the development server
+7. Start the development server
 ```bash
 php artisan serve
 ```
 
-9. In a separate terminal, compile assets
+8. In a separate terminal, compile assets
 ```bash
 npm run dev
 ```
@@ -106,7 +104,7 @@ Your application should now be running at `http://localhost:8000`
 ### Common Issues
 - If you encounter any permissions issues, run commands as administrator
 - Check that all required PHP extensions are enabled in php.ini
-- Make sure the sqlite3 PHP extension is enabled
+- Make sure the sqlite3 PHP extension is enabled in vs code
 Your application should now be running at `http://localhost:8000`
 
 ### Common Issues
