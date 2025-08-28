@@ -6,7 +6,9 @@ provides a unified platform to manage programs, facilities, services, equipment,
 ipants, and outcomes, ensuring that projects are well-organized, properly resourced, and aligned
 with Uganda’s NDPIII, Digital Transformation Roadmap (2023–2028), and 4IR Strategy.
 
-## Windows Setup Instructions (SQLite)
+This Project implements a Web application, and mobile app(Android/IOS). It also strictly follows the MVC Architecture.
+
+## Setup Instructions (SQLite) - Windows OS
 
 This guide will help you set up and run the Laravel project on **Windows** using **SQLite**. No additional server stack (XAMPP/WAMP) is required — just make sure you have PHP, Composer, Node.js, and Git setup correctly on your machine.
 
@@ -28,9 +30,9 @@ This guide will help you set up and run the Laravel project on **Windows** using
 2. **Composer** – PHP dependency manager  
    - [Get Composer](https://getcomposer.org/download/)
 3. **Node.js & NPM** – For compiling frontend assets  
-   - [Download Node.js](https://nodejs.org/)
+   - [Download Node.js](https://nodejs.org/en/download)
 4. **Git** – For cloning the repository  
-   - [Download Git](https://git-scm.com/)
+   - [Download Git](https://git-scm.com/downloads)
 
 ---
 
