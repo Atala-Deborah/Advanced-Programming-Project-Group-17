@@ -1,131 +1,63 @@
-# ADVANCED PROGRAMMING PROJECT (Group 17)
-## Collabo System
-This system enables multidisciplinary student teams from Computer Science/Software Engineer-
-ing and Engineering to collaborate on real-world projects carried out at government facilities. It
-provides a unified platform to manage programs, facilities, services, equipment, projects, partic-
-ipants, and outcomes, ensuring that projects are well-organized, properly resourced, and aligned
-with Uganda’s NDPIII, Digital Transformation Roadmap (2023–2028), and 4IR Strategy.
 
-This Project implements a Web application, and mobile app(Android/IOS). It also strictly follows the MVC Architecture.
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-## Setup Instructions (SQLite) - Windows OS
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-This guide will help you set up and run the Laravel project on **Windows** using **SQLite**. No additional server stack (XAMPP/WAMP) is required — just make sure you have PHP, Composer, Node.js, and Git setup correctly on your machine.
+## About Laravel
 
----
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-### Prerequisites
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-1. **PHP 8.1 or higher**  
-   - Make sure PHP is installed and added to your system PATH.  
-   - Required PHP extensions:
-     - `pdo`
-     - `pdo_sqlite`
-     - `openssl`
-     - `mbstring`
-     - `tokenizer`
-     - `xml`
-     - `ctype`
-     - `json`
-2. **Composer** – PHP dependency manager  
-   - [Get Composer](https://getcomposer.org/download/)
-3. **Node.js & NPM** – For compiling frontend assets  
-   - [Download Node.js](https://nodejs.org/en/download)
-4. **Git** – For cloning the repository  
-   - [Download Git](https://git-scm.com/downloads)
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
----
+## Learning Laravel
 
-### Clone the repo
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-Open **Command Prompt** or **PowerShell** and run:
+You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-```bash
-git clone https://github.com/Atala-Deborah/Advanced-Programming-Project-Group-17.git
-```
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-```bash
-cd Advanced-Programming-Project-Group-17/capstone-app
-```
+## Laravel Sponsors
 
-### Dependency Installations
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
+### Premium Partners
 
-1. Install PHP dependencies
-```bash
-composer install
-```
+- **[Vehikl](https://vehikl.com)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Redberry](https://redberry.international/laravel-development)**
+- **[Active Logic](https://activelogic.com)**
 
-2. Install NPM packages
-```bash
-npm install
-```
+## Contributing
 
-3. Create environment file. (This will be shared in the group but you can as well create your own in the project directory using)
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-```bash
-cp .env.example .env
-```
+## Code of Conduct
 
-4. Generate application key
-```bash
-php artisan key:generate
-```
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-5. Configure database in `.env` file
-```
-DB_CONNECTION=sqlite
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=laravel
-DB_USERNAME=root
-DB_PASSWORD=ap.capstone
-```
+## Security Vulnerabilities
 
-6. Create SQLite database file. (This is if it doesn't exist already in capstone-app/database)
-```bash
-type nul > database/database.sqlite
-```
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-7. Start the development server
-```bash
-php artisan serve
-```
+## License
 
-8. In a separate terminal, compile assets
-```bash
-npm run dev
-```
-(This will compile JavaScript and CSS assets required for the frontend)
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-Your application should now be running at `http://localhost:8000`
-
-### Common Issues
-- If you encounter any permissions issues, run commands as administrator
-- Check that all required PHP extensions are enabled in php.ini
-- Make sure the sqlite3 PHP extension is enabled in vs code
-Your application should now be running at `http://localhost:8000`
-
-### Common Issues
-- If you encounter any permissions issues, run commands as administrator
-- Make sure MySQL service is running before migrations
-- Check that all required PHP extensions are enabled in php.ini
-
-## FRONTEND DEVELOPMENT GUIDE
-Key Frontend Locations:
-`Views: resources/views/`
-`CSS: resources/css/app.css`
-`JavaScript: resources/js/app.js`
-`Assets: public/`
-
-### Development Server
-Run Vite development server to compile and hot-reload assets:
-
-```bash
-npm run dev
-```
-Production Build
-
-```bash
-npm run build
-```
