@@ -17,8 +17,8 @@ return new class extends Migration
             $table->enum('SkillType', ['Hardware', 'Software', 'Integration']);
             $table->timestamps();
 
-            // Add foreign key constraint
-            $table->foreign('FacilityId')->references('id')->on('facilities')->onDelete('cascade');
+            // Add foreign key constraint with cascade delete
+            $table->foreign('FacilityId')->references('FacilityId')->on('facilities')->onDelete('cascade');
         });
     }
 
