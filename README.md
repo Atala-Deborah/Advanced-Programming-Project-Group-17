@@ -1,63 +1,114 @@
-
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CollaBox
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/logowhite.png" alt="CollaBox Logo" width="150">
+  <h1 align="center">Facility Management System</h1>
+  <p align="center">This system enables multidisciplinary student teams from Computer Science/Software Engineer- ing and Engineering to collaborate on real-world projects carried out at government facilities. It provides a unified platform to manage programs, facilities, services, equipment, projects, partic- ipants, and outcomes, ensuring that projects are well-organized, properly resourced, and aligned with Uganda’s NDPIII, Digital Transformation Roadmap (2023–2028), and 4IR Strategy.
+
+This Project was built with Laravel and strictly follows the MVC Architecture.</p>
+  
+  <p align="center">
+    <a href="#features">Features</a> •
+    <a href="#requirements">Requirements</a> •
+    <a href="#installation">Installation</a> •
+    <a href="#usage">Usage</a> •
+    <a href="#license">License</a>
+  </p>
 </p>
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Facility Management**: Track and manage multiple facilities with ease
+- **Service Tracking**: Monitor services and maintenance schedules
+- **Equipment Management**: Keep track of equipment across facilities
+- **User Authentication**: Secure user management system
+- **Responsive Design**: Works on desktop and mobile devices
+- **Modern UI**: Clean and intuitive user interface
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠 Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP >= 8.1
+- Composer
+- MySQL >= 5.7 or MariaDB >= 10.3
+- Node.js >= 14.x
+- NPM or Yarn
 
-## Learning Laravel
+## 🚀 Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/facility-management-system.git
+   cd facility-management-system
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Install NPM dependencies:
+   ```bash
+   npm install
+   ```
 
-## Laravel Sponsors
+4. Create a copy of the .env file:
+   ```bash
+   cp .env.example .env
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Generate application key:
+   ```bash
+   php artisan key:generate
+   ```
 
-### Premium Partners
+6. Configure your database in the `.env` file
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+7. Run database migrations and seeders:
+   ```bash
+   php artisan migrate --seed
+   ```
 
-## Contributing
+8. Compile assets:
+   ```bash
+   npm run build
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+9. Start the development server:
+   ```bash
+   php artisan serve
+   ```
 
-## Code of Conduct
+Visit `http://localhost:8000` in your browser to see the application.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📝 Usage
 
-## Security Vulnerabilities
+1. Register a new account or use the default admin credentials:
+   - Email: admin@example.com
+   - Password: password
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Navigate through the dashboard to manage facilities, services, and equipment.
 
-## License
+## 🤝 Contributing
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Laravel](https://laravel.com)
+- Frontend powered by [Tailwind CSS](https://tailwindcss.com/)
+- Icons from [Heroicons](https://heroicons.com/)
+
+## 🔒 Security
+
+If you discover any security related issues, please email your team's security contact instead of using the issue tracker.
 
