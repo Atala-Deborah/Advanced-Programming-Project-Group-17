@@ -34,4 +34,4 @@ class Facility extends Model
     {
         return $this->hasMany(Service::class, 'FacilityId', 'FacilityId');
     }
-}<!-- to be worked on by Naomi -->
+}
