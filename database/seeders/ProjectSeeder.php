@@ -11,7 +11,7 @@ class ProjectSeeder extends Seeder
     {
         $projects = [
             [
-                'Name' => 'Research Project Alpha',
+                'Title' => 'Research Project Alpha',
                 'Description' => 'Innovative research project',
                 'Status' => 'Active',
                 'StartDate' => now(),
@@ -19,7 +19,7 @@ class ProjectSeeder extends Seeder
                 'FacilityId' => 1
             ],
             [
-                'Name' => 'Development Project Beta',
+                'Title' => 'Development Project Beta',
                 'Description' => 'Software development project',
                 'Status' => 'Planning',
                 'StartDate' => now()->addMonth(),
@@ -27,7 +27,7 @@ class ProjectSeeder extends Seeder
                 'FacilityId' => 2
             ],
             [
-                'Name' => 'Testing Project Gamma',
+                'Title' => 'Testing Project Gamma',
                 'Description' => 'Quality assurance project',
                 'Status' => 'Active',
                 'StartDate' => now()->subMonth(),
