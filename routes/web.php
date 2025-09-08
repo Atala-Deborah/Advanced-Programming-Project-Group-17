@@ -8,6 +8,7 @@ use App\Http\Controllers\ProjectParticipantController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProgramController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -34,6 +35,9 @@ Route::resource('facilities', FacilityController::class);
 
 // Services
 Route::resource('services', ServiceController::class);
+
+// Programs
+Route::resource('programs', ProgramController::class);
 
 // Redirect /home to dashboard
 Route::get('/home', function() {

@@ -142,6 +142,15 @@
                         </svg>
                         <span>Services</span>
                     </a>
+
+                    <a href="{{ route('programs.index') }}" 
+                       class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('programs.*') ? 'active' : '' }}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <span>Programs</span>
+                    </a>
                 </nav>
 
                 <!-- Logout -->
