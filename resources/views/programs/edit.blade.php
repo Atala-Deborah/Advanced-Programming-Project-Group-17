@@ -47,8 +47,15 @@
             </div>
 
             <div class="mb-4">
-                <label for="Phases" class="block text-sm font-medium text-gray-700">Phases (comma separated)</label>
-                <input type="text" name="Phases" id="Phases" value="{{ old('Phases', is_array($program->Phases) ? implode(',', $program->Phases) : $program->Phases) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., Planning,Implementation,Evaluation">
+                <label for="Phases" class="block text-sm font-medium text-gray-700">Phase</label>
+                <select name="Phases" id="Phases" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option value="">Select a Phase</option>
+                    <option value="Cross-Skilling" {{ old('Phases', $program->Phases) == 'Cross-Skilling' ? 'selected' : '' }}>Cross-Skilling</option>
+                    <option value="Collaboration" {{ old('Phases', $program->Phases) == 'Collaboration' ? 'selected' : '' }}>Collaboration</option>
+                    <option value="Technical Skills" {{ old('Phases', $program->Phases) == 'Technical Skills' ? 'selected' : '' }}>Technical Skills</option>
+                    <option value="Prototyping" {{ old('Phases', $program->Phases) == 'Prototyping' ? 'selected' : '' }}>Prototyping</option>
+                    <option value="Commercialization" {{ old('Phases', $program->Phases) == 'Commercialization' ? 'selected' : '' }}>Commercialization</option>
+                </select>
                 @error('Phases')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

@@ -42,10 +42,22 @@ class Project extends Model
                     ->withTimestamps();
     }
 
+    public function program()
+    {
+        return $this->belongsTo(Program::class, 'ProgramId', 'ProgramId');
+    }
+
     public function participants()
     {
-        return $this->belongsToMany(User::class, 'project_participants', 'project_id', 'user_id')
-                    ->withPivot('role')
-                    ->withTimestamps();
+        return $this->belongsToMany(Participant::class, 'project_participants', 'ProjectId', 'ParticipantId')
+            ->withPivot('RoleOnProject', 'SkillRole');
+    }
+
+    /**
+     * Get all outcomes for the project.
+     */
+    public function outcomes()
+    {
+        return $this->hasMany(Outcome::class, 'ProjectId', 'ProjectId');
     }
 }

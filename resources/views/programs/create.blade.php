@@ -46,8 +46,15 @@
             </div>
 
             <div class="mb-4">
-                <label for="Phases" class="block text-sm font-medium text-gray-700">Phases (comma separated)</label>
-                <input type="text" name="Phases" id="Phases" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="e.g., Planning,Implementation,Evaluation">
+                <label for="Phases" class="block text-sm font-medium text-gray-700">Phase</label>
+                <select name="Phases" id="Phases" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option value="">Select a Phase</option>
+                    <option value="Cross-Skilling">Cross-Skilling</option>
+                    <option value="Collaboration">Collaboration</option>
+                    <option value="Technical Skills">Technical Skills</option>
+                    <option value="Prototyping">Prototyping</option>
+                    <option value="Commercialization">Commercialization</option>
+                </select>
                 @error('Phases')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

@@ -25,12 +25,12 @@ class ProgramController extends Controller
             'Description' => 'nullable|string',
             'NationalAlignment' => 'nullable|string',
             'FocusAreas' => 'nullable|string',
-            'Phases' => 'nullable|string',
+            'Phases' => 'nullable|string|in:Cross-Skilling,Collaboration,Technical Skills,Prototyping,Commercialization',
         ]);
 
-        // Convert comma-separated phases to array
-        if (!empty($validated['Phases'])) {
-            $validated['Phases'] = array_map('trim', explode(',', $validated['Phases']));
+        // Ensure Phases is a string, not an array
+        if (is_array($validated['Phases'] ?? null)) {
+            $validated['Phases'] = $validated['Phases'][0] ?? null;
         }
 
         Program::create($validated);
@@ -56,12 +56,12 @@ class ProgramController extends Controller
             'Description' => 'nullable|string',
             'NationalAlignment' => 'nullable|string',
             'FocusAreas' => 'nullable|string',
-            'Phases' => 'nullable|string',
+            'Phases' => 'nullable|string|in:Cross-Skilling,Collaboration,Technical Skills,Prototyping,Commercialization',
         ]);
 
-        // Convert comma-separated phases to array
-        if (!empty($validated['Phases'])) {
-            $validated['Phases'] = array_map('trim', explode(',', $validated['Phases']));
+        // Ensure Phases is a string, not an array
+        if (is_array($validated['Phases'] ?? null)) {
+            $validated['Phases'] = $validated['Phases'][0] ?? null;
         }
 
         $program->update($validated);

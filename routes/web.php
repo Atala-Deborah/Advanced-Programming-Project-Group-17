@@ -9,6 +9,8 @@ use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\ParticipantController;
+use App\Http\Controllers\OutcomeController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -20,8 +22,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::resource('projects', ProjectController::class);
 
 // Project Participants
-Route::post('/projects/{project}/participants', [ProjectParticipantController::class, 'store'])->name('project.participants.store');
-Route::delete('/projects/{project}/participants/{participant}', [ProjectParticipantController::class, 'destroy'])->name('project.participants.destroy');
+Route::get('/projects/{project}/participants', [ProjectParticipantController::class, 'index'])->name('projects.participants.index');
+Route::post('/projects/{project}/participants', [ProjectParticipantController::class, 'store'])->name('projects.participants.store');
+Route::delete('/projects/{project}/participants/{participant}', [ProjectParticipantController::class, 'destroy'])->name('projects.participants.destroy');
 
 // Equipment
 Route::resource('equipment', EquipmentController::class);
@@ -38,6 +41,16 @@ Route::resource('services', ServiceController::class);
 
 // Programs
 Route::resource('programs', ProgramController::class);
+
+// Participants
+Route::resource('participants', ParticipantController::class);
+
+
+// Outcomes
+Route::resource('outcomes', OutcomeController::class);
+
+// Project Outcomes
+Route::get('/projects/{project}/outcomes', [OutcomeController::class, 'projectOutcomes'])->name('projects.outcomes.index');
 
 // Redirect /home to dashboard
 Route::get('/home', function() {
