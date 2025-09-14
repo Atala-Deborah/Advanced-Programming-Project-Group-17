@@ -9,6 +9,8 @@ use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\ParticipantController;
+use App\Http\Controllers\OutcomeController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -38,6 +40,12 @@ Route::resource('services', ServiceController::class);
 
 // Programs
 Route::resource('programs', ProgramController::class);
+
+// Participants Routes
+Route::resource('participants', ParticipantController::class);
+
+// Outcomes Routes
+Route::resource('outcomes', OutcomeController::class);
 
 // Redirect /home to dashboard
 Route::get('/home', function() {
