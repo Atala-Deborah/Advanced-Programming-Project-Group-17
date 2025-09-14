@@ -44,8 +44,11 @@ class Project extends Model
 
     public function participants()
     {
-        return $this->belongsToMany(User::class, 'project_participants', 'project_id', 'user_id')
-                    ->withPivot('role')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            Participant::class,
+            'project_participants',
+            'ProjectId',
+            'ParticipantId'
+        )->withPivot(['RoleOnProject', 'SkillRole']);
     }
 }

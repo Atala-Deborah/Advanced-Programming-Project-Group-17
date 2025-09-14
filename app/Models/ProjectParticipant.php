@@ -9,19 +9,29 @@ class ProjectParticipant extends Model
 {
     use HasFactory;
 
+    protected $table = 'project_participants';
+    public $incrementing = false;
+    protected $primaryKey = null;
+
     protected $fillable = [
-        'project_id',
-        'user_id',
-        'role'
+        'ProjectId',
+        'ParticipantId',
+        'RoleOnProject',
+        'SkillRole'
+    ];
+
+    protected $casts = [
+        'RoleOnProject' => 'string',
+        'SkillRole' => 'string',
     ];
 
     public function project()
     {
-        return $this->belongsTo(Project::class, 'project_id', 'ProjectId');
+        return $this->belongsTo(Project::class, 'ProjectId', 'ProjectId');
     }
 
-    public function user()
+    public function participant()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Participant::class, 'ParticipantId', 'ParticipantId');
     }
 }

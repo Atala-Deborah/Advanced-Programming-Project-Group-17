@@ -8,20 +8,66 @@ use Illuminate\Http\Request;
 
 class EquipmentController extends Controller
 {
-    //  List all equipment
+    // List all equipment with search and filters
     public function index(Request $request)
     {
         $query = Equipment::with('facility');
 
-        //  Search by capability or usage domain
+        // Search functionality
         if ($request->has('search')) {
-            $search = $request->input('search');
-            $query->where('Capabilities', 'LIKE', "%$search%")
-                  ->orWhere('UsageDomain', 'LIKE', "%$search%");
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('Name', 'like', "%{$search}%")
+                  ->orWhere('Capabilities', 'like', "%{$search}%")
+                  ->orWhere('Description', 'like', "%{$search}%")
+                  ->orWhere('InventoryCode', 'like', "%{$search}%");
+            });
         }
 
-        $equipment = $query->paginate(10);
-        return view('equipment.index', compact('equipment'));
+        // Filter by facility
+        if ($request->has('facility') && $request->facility !== 'all') {
+            $query->where('FacilityId', $request->facility);
+        }
+
+        // Filter by usage domain
+        if ($request->has('usage_domain') && $request->usage_domain !== 'all') {
+            $query->where('UsageDomain', $request->usage_domain);
+        }
+
+        // Filter by support phase
+        if ($request->has('support_phase') && $request->support_phase !== 'all') {
+            $query->where('SupportPhase', $request->support_phase);
+        }
+
+        // Get all facilities for filter dropdown
+        $facilities = Facility::orderBy('Name')->pluck('Name', 'FacilityId');
+        
+        // Define available usage domains for filter dropdown
+        $usageDomains = [
+            'Electronics' => 'Electronics',
+            'Mechanical' => 'Mechanical',
+            'IoT' => 'Internet of Things (IoT)'
+        ];
+
+        // Define support phases for filter dropdown
+        $supportPhases = [
+            'Planning' => 'Planning',
+            'Development' => 'Development',
+            'Testing' => 'Testing',
+            'Production' => 'Production',
+            'Maintenance' => 'Maintenance',
+            'Retired' => 'Retired'
+        ];
+
+        // Get filtered and paginated results
+        $equipment = $query->orderBy('Name')->paginate(10)->withQueryString();
+
+        return view('equipment.index', compact(
+            'equipment', 
+            'facilities', 
+            'usageDomains',
+            'supportPhases'
+        ));
     }
 
     //  Show equipment at a specific facility

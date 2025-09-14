@@ -9,16 +9,164 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::with('facility')->paginate(10);
-        return view('projects.index', compact('projects'));
+        $query = Project::with(['facility', 'participants']);
+
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('Title', 'like', "%{$search}%")
+                  ->orWhere('Description', 'like', "%{$search}%")
+                  ->orWhere('InnovationFocus', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by facility
+        if ($request->has('facility') && $request->facility !== 'all') {
+            $query->where('FacilityId', $request->facility);
+        }
+
+        // Filter by status
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('Status', $request->status);
+        }
+
+        // Filter by project nature
+        if ($request->has('nature') && $request->nature !== 'all') {
+            $query->where('NatureOfProject', $request->nature);
+        }
+
+        // Filter by prototype stage
+        if ($request->has('stage') && $request->stage !== 'all') {
+            $query->where('PrototypeStage', $request->stage);
+        }
+
+        // Get all facilities for filter dropdown
+        $facilities = Facility::orderBy('Name')->pluck('Name', 'FacilityId');
+        
+        // Define status options
+        $statuses = [
+            'Planning' => 'Planning',
+            'Active' => 'Active',
+            'On Hold' => 'On Hold',
+            'Completed' => 'Completed'
+        ];
+
+        // Define project natures
+        $natures = [
+            'Research' => 'Research',
+            'Prototype' => 'Prototype',
+            'Applied work' => 'Applied Work'
+        ];
+
+        // Define prototype stages
+        $stages = [
+            'Concept' => 'Concept',
+            'Prototype' => 'Prototype',
+            'MVP' => 'Minimum Viable Product',
+            'Market Launch' => 'Market Launch'
+        ];
+
+        // Get filtered and paginated results
+        $projects = $query->orderBy('StartDate', 'desc')
+                         ->paginate(10)
+                         ->withQueryString();
+
+        return view('projects.index', compact(
+            'projects', 
+            'facilities',
+            'statuses',
+            'natures',
+            'stages'
+        ));
+    }
+    
+    // Show projects by facility
+    public function byFacility($facilityId)
+    {
+        $facility = Facility::findOrFail($facilityId);
+        
+        $query = Project::where('FacilityId', $facilityId)
+                      ->with(['facility', 'participants']);
+        
+        // Search functionality
+        if (request()->has('search')) {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('Title', 'like', "%{$search}%")
+                  ->orWhere('Description', 'like', "%{$search}%")
+                  ->orWhere('InnovationFocus', 'like', "%{$search}%");
+            });
+        }
+        
+        // Filter by status
+        if (request()->has('status') && request('status') !== 'all') {
+            $query->where('Status', request('status'));
+        }
+        
+        // Filter by project nature
+        if (request()->has('nature') && request('nature') !== 'all') {
+            $query->where('NatureOfProject', request('nature'));
+        }
+        
+        // Filter by prototype stage
+        if (request()->has('stage') && request('stage') !== 'all') {
+            $query->where('PrototypeStage', request('stage'));
+        }
+        
+        // Date range filter
+        if (request()->has('start_date') && request('start_date')) {
+            $query->whereDate('StartDate', '>=', request('start_date'));
+        }
+        if (request()->has('end_date') && request('end_date')) {
+            $query->whereDate('EndDate', '<=', request('end_date'));
+        }
+        
+        $projects = $query->orderBy('StartDate', 'desc')
+                         ->paginate(10)
+                         ->withQueryString();
+        
+        // Define status options
+        $statuses = [
+            'Planning' => 'Planning',
+            'Active' => 'Active',
+            'On Hold' => 'On Hold',
+            'Completed' => 'Completed'
+        ];
+        
+        // Define project natures
+        $natures = [
+            'Research' => 'Research',
+            'Prototype' => 'Prototype',
+            'Applied work' => 'Applied Work'
+        ];
+        
+        // Define prototype stages
+        $stages = [
+            'Concept' => 'Concept',
+            'Prototype' => 'Prototype',
+            'MVP' => 'Minimum Viable Product',
+            'Market Launch' => 'Market Launch'
+        ];
+        
+        return view('projects.index', [
+            'projects' => $projects,
+            'facility' => $facility,
+            'facilities' => Facility::orderBy('Name')->pluck('Name', 'FacilityId'),
+            'statuses' => $statuses,
+            'natures' => $natures,
+            'stages' => $stages,
+            'currentFilters' => request()->all()
+        ]);
     }
 
     public function create()
     {
-        $facilities = Facility::all();
-        return view('projects.create', compact('facilities'));
+        $facilities = Facility::orderBy('Name')->get();
+        $selectedFacilityId = request('facility_id');
+        return view('projects.create', compact('facilities', 'selectedFacilityId'));
     }
 
     public function store(Request $request)

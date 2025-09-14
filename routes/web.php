@@ -20,6 +20,7 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 // Projects
 Route::resource('projects', ProjectController::class);
+Route::get('facility/{facilityId}/projects', [ProjectController::class, 'byFacility'])->name('projects.by_facility');
 
 // Project Participants
 Route::post('/projects/{project}/participants', [ProjectParticipantController::class, 'store'])->name('project.participants.store');

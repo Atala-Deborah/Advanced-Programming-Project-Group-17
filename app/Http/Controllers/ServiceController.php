@@ -8,11 +8,60 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    // List all services
-    public function index()
+    // List all services with search and filters
+    public function index(Request $request)
     {
-        $services = Service::with('facility')->get(); // eager load facility
-        return view('services.index', compact('services'));
+        $query = Service::with('facility');
+
+        // Search by name or description
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('Name', 'like', "%{$search}%")
+                  ->orWhere('Description', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by facility
+        if ($request->has('facility') && $request->facility !== 'all') {
+            $query->where('FacilityId', $request->facility);
+        }
+
+        // Filter by category
+        if ($request->has('category') && $request->category !== 'all') {
+            $query->where('Category', $request->category);
+        }
+
+        // Filter by skill type
+        if ($request->has('skill_type') && $request->skill_type !== 'all') {
+            $query->where('SkillType', $request->skill_type);
+        }
+
+        // Get all facilities for filter dropdown
+        $facilities = Facility::orderBy('Name')->pluck('Name', 'FacilityId');
+        
+        // Define available categories and skill types for dropdowns
+        $categories = [
+            'Machining' => 'Machining',
+            'Testing' => 'Testing',
+            'Training' => 'Training'
+        ];
+        
+        $skillTypes = [
+            'Hardware' => 'Hardware',
+            'Software' => 'Software',
+            'Integration' => 'Integration'
+        ];
+
+        // Get filtered and paginated results
+        $services = $query->orderBy('Name')->paginate(10)->withQueryString();
+
+        return view('services.index', compact(
+            'services', 
+            'facilities', 
+            'categories', 
+            'skillTypes'
+        ));
     }
 
     // Show the form to create a new service

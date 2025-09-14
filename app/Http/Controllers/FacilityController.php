@@ -7,10 +7,46 @@ use Illuminate\Http\Request;
 
 class FacilityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $facilities = Facility::all();
-        return view('facilities.index', compact('facilities'));
+        $query = Facility::query();
+
+        // Search by name or description
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('Name', 'like', "%{$search}%")
+                  ->orWhere('Description', 'like', "%{$search}%")
+                  ->orWhere('Location', 'like', "%{$search}%")
+                  ->orWhere('PartnerOrganization', 'like', "%{$search}%")
+                  ->orWhere('Capabilities', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by facility type
+        if ($request->has('type') && $request->type !== 'all') {
+            $query->where('FacilityType', $request->type);
+        }
+
+        // Filter by partner organization
+        if ($request->has('partner') && $request->partner !== 'all') {
+            $query->where('PartnerOrganization', $request->partner);
+        }
+
+        // Get unique partner organizations for filter dropdown
+        $partners = Facility::select('PartnerOrganization')
+            ->distinct()
+            ->whereNotNull('PartnerOrganization')
+            ->orderBy('PartnerOrganization')
+            ->pluck('PartnerOrganization');
+
+        // Get all facility types for filter dropdown
+        $facilityTypes = ['Lab', 'Workshop', 'Testing Center'];
+
+        // Get filtered and paginated results
+        $facilities = $query->orderBy('Name')->paginate(10)->withQueryString();
+
+        return view('facilities.index', compact('facilities', 'partners', 'facilityTypes'));
     }
 
     public function create()

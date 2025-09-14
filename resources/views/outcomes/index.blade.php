@@ -1,36 +1,50 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold">
-                @if(isset($project))
-                    Outcomes for {{ $project->Title }}
-                @else
-                    All Project Outcomes
-                @endif
-            </h1>
-            @if(isset($project))
-                <p class="text-sm text-gray-500 mt-1">
-                    <a href="{{ route('projects.show', $project->ProjectId) }}" class="text-indigo-600 hover:text-indigo-900">
-                        &larr; Back to project
+<div class="bg-white shadow rounded-lg overflow-hidden">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex-1">
+                    <h1 class="text-2xl font-bold">
+                        @if(isset($project))
+                            Outcomes for {{ $project->Title }}
+                        @else
+                            All Project Outcomes
+                        @endif
+                    </h1>
+                    <p class="mt-2 text-blue-100">
+                        @if(isset($project))
+                            <a href="{{ route('projects.show', $project->ProjectId) }}" class="text-blue-200 hover:text-white">
+                                &larr; Back to project
+                            </a>
+                        @else
+                            Browse and manage all project outcomes
+                        @endif
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <a href="{{ route('outcomes.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Add Outcome
                     </a>
-                </p>
-            @endif
+                </div>
+            </div>
         </div>
-        <a href="{{ route('outcomes.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-            Add Outcome
-        </a>
     </div>
 
     @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span class="block sm:inline">{{ session('success') }}</span>
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
         </div>
     @endif
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-4 py-5 sm:p-6">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
