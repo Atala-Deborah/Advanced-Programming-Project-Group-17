@@ -59,17 +59,40 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Sidebar icons - force blue */
-        .nav-link svg {
-            color: #2563eb; /* Tailwind blue-600 */
+        /* Sidebar navigation styles */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
         }
+        
+        .nav-link:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 197, 253, 0.1));
+            transform: translateX(4px);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            transform: translateX(6px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-link.active svg {
+            color: white;
+        }
+        
+        .nav-link:not(.active) svg {
+            color: #2563eb;
+        }
+        
+
     </style>
 </head>
 <body class="font-sans antialiased">
-    <div class="min-h-screen relative">
+    <div class="min-h-screen relative flex flex-col">
         
         <!-- Hero Section -->
-        <section class="hero">
+        <section class="hero flex-shrink-0">
             <div class="hero-content">
                 <img src="{{ asset('logowhite.png') }}" alt="CollaBox Logo">
                 <h1 class="text-2xl md:text-3xl font-bold">Facility Management System</h1>
@@ -99,7 +122,7 @@
                 <!-- Navigation -->
                 <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                     <a href="{{ route('dashboard') }}" 
-                       class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -108,7 +131,7 @@
                     </a>
 
                     <a href="{{ route('projects.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('projects.*') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('projects.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -117,7 +140,7 @@
                     </a>
 
                     <a href="{{ route('facilities.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('facilities.*') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('facilities.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -126,7 +149,7 @@
                     </a>
 
                     <a href="{{ route('equipment.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('equipment.*') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('equipment.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a2 2 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
@@ -135,7 +158,7 @@
                     </a>
 
                     <a href="{{ route('services.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('services.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -144,7 +167,7 @@
                     </a>
 
                     <a href="{{ route('programs.index') }}" 
-                       class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('programs.*') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('programs.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -152,9 +175,8 @@
                         <span>Programs</span>
                     </a>
 
-                    <!-- Participants Link -->
                     <a href="{{ route('participants.index') }}" 
-                    class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('participants.*') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('participants.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -162,9 +184,8 @@
                         <span>Participants</span>
                     </a>
 
-                    <!-- Outcomes Link -->
                     <a href="{{ route('outcomes.index') }}" 
-                    class="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-200 nav-link {{ request()->routeIs('outcomes.*') ? 'active' : '' }}">
+                       class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 {{ request()->routeIs('outcomes.*') ? 'active' : '' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -174,26 +195,70 @@
                 </nav>
 
                 <!-- Logout -->
-                <div class="border-t border-gray-200">
-                    <button class="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gray-200">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                <div class="border-t border-gray-200 px-3 py-3">
+                    <button class="nav-link flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 w-full hover:bg-red-50 hover:text-red-700 transition-all duration-200">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"/>
                         </svg>
-                        <span class="ml-3 text-sm font-medium">Logout</span>
+                        <span class="text-sm font-medium">Logout</span>
                     </button>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <div class="lg:pl-64 relative z-10">
-            <main class="py-6">
+        <div class="lg:pl-64 relative z-10 flex flex-col flex-1">
+            <main class="flex-1 py-6">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     @yield('content')
                 </div>
             </main>
+            
+            <!-- Footer -->
+            <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-auto">
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div class="text-center text-sm text-gray-500">
+                        <p>&copy; {{ date('Y') }} Advanced Programming Capstone Project. All rights reserved.</p>
+                        <p class="mt-1">Innovation Hub Management System - Group 17</p>
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
+
+    <!-- Include Delete Modal Component -->
+    @include('components.delete-modal')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth animations on page load
+            const sidebar = document.querySelector('aside');
+            if (sidebar) {
+                sidebar.style.transform = 'translateX(-100%)';
+                sidebar.style.transition = 'transform 0.3s ease';
+                
+                setTimeout(() => {
+                    sidebar.style.transform = 'translateX(0)';
+                }, 100);
+            }
+            
+            // Add hover effects for better UX
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.transform = 'translateX(4px)';
+                    }
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('active')) {
+                        this.style.transform = 'translateX(0)';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

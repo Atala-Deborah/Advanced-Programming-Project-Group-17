@@ -179,14 +179,16 @@
                                    class="text-green-600 hover:text-green-900">View Profile</a>
                                 <a href="{{ route('participants.edit', $participant->ParticipantId) }}" 
                                    class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                <form action="{{ route('participants.destroy', $participant->ParticipantId) }}" method="POST" class="inline">
+                                <form id="delete-participant-{{ $participant->ParticipantId }}" 
+                                      action="{{ route('participants.destroy', $participant->ParticipantId) }}" 
+                                      method="POST" class="hidden">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900" 
-                                            onclick="return confirm('Are you sure you want to delete this participant? This will also remove them from all projects.')">
-                                        Delete
-                                    </button>
                                 </form>
+                                <button onclick="deleteParticipant({{ $participant->ParticipantId }}, '{{ $participant->FullName }}')" 
+                                        class="text-red-600 hover:text-red-900">
+                                    Delete
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -209,4 +211,20 @@
         {{ $participants->links() }}
     </div>
 </div>
+
+@push('scripts')
+<script>
+    // Delete participant function
+    function deleteParticipant(participantId, participantName) {
+        const form = document.getElementById(`delete-participant-${participantId}`);
+        
+        confirmDelete({
+            title: 'Delete Participant',
+            message: `Are you sure you want to delete "${participantName}"? This will also remove them from all projects they are part of.`,
+            form: form
+        });
+    }
+</script>
+@endpush
+
 @endsection

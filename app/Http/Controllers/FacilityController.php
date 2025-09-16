@@ -104,37 +104,84 @@ class FacilityController extends Controller
         return view('facilities.delete-confirm', compact('facility', 'otherFacilities'));
     }
 
+    /**
+     * Get dependency information for a facility
+     */
+    public function getDependencies(Facility $facility)
+    {
+        $dependencies = [];
+        
+        // Check for projects
+        $projectCount = $facility->projects()->count();
+        if ($projectCount > 0) {
+            $dependencies[] = "{$projectCount} project(s)";
+        }
+        
+        // Check for equipment
+        $equipmentCount = $facility->equipment()->count();
+        if ($equipmentCount > 0) {
+            $dependencies[] = "{$equipmentCount} equipment item(s)";
+        }
+        
+        // Check for services
+        $serviceCount = $facility->services()->count();
+        if ($serviceCount > 0) {
+            $dependencies[] = "{$serviceCount} service(s)";
+        }
+        
+        // Get alternative facilities for reassignment
+        $alternatives = Facility::where('FacilityId', '!=', $facility->FacilityId)
+            ->select('FacilityId', 'Name', 'Location')
+            ->get()
+            ->map(function($f) {
+                return [
+                    'id' => $f->FacilityId,
+                    'name' => $f->Name . ' (' . $f->Location . ')'
+                ];
+            });
+        
+        return response()->json([
+            'dependencies' => $dependencies,
+            'alternatives' => $alternatives
+        ]);
+    }
+
     public function destroy(Request $request, Facility $facility)
     {
-        if ($facility->projects()->exists()) {
-            $deletionType = $request->input('deletion_type');
-
-            if ($deletionType === 'reassign') {
-                $newFacilityId = $request->input('new_facility_id');
-                $newFacility = Facility::find($newFacilityId);
+        $deleteAction = $request->input('delete_action', 'cascade');
+        
+        // Handle dependencies
+        if ($facility->projects()->exists() || $facility->equipment()->exists() || $facility->services()->exists()) {
+            if ($deleteAction === 'reassign') {
+                $reassignTo = $request->input('reassign_to');
+                $newFacility = Facility::find($reassignTo);
 
                 if (!$newFacility) {
                     return redirect()->route('facilities.index')
                         ->with('error', 'Selected facility for reassignment not found.');
                 }
 
-                // Reassign all projects to the new facility
-                $facility->projects()->update(['FacilityId' => $newFacilityId]);
-            }
-            elseif ($deletionType === 'delete_all') {
-                // Delete all associated projects first
+                // Reassign all dependencies to the new facility
+                $facility->projects()->update(['FacilityId' => $reassignTo]);
+                $facility->equipment()->update(['FacilityId' => $reassignTo]);
+                $facility->services()->update(['FacilityId' => $reassignTo]);
+                
+                $message = "Facility deleted successfully. Dependencies reassigned to {$newFacility->Name}.";
+            } else {
+                // Cascade delete - delete all dependencies
                 $facility->projects()->delete();
+                $facility->equipment()->delete();
+                $facility->services()->delete();
+                
+                $message = "Facility and all associated items deleted successfully.";
             }
-            else {
-                return redirect()->route('facilities.index')
-                    ->with('error', 'Invalid deletion type specified.');
-            }
+        } else {
+            $message = "Facility deleted successfully.";
         }
 
-        // Now safe to delete the facility (services and equipment will cascade)
         $facility->delete();
 
         return redirect()->route('facilities.index')
-            ->with('success', 'Facility and associated items deleted successfully.');
+            ->with('success', $message);
     }
 }

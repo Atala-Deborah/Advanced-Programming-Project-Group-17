@@ -63,16 +63,16 @@
                             <div class="flex-shrink-0 flex items-center space-x-2">
                                 <a href="{{ route('participants.show', $participant->ParticipantId) }}" 
                                    class="text-indigo-600 hover:text-indigo-900 text-sm">View</a>
-                                <form action="{{ route('project.participants.destroy', [$project->ProjectId, $participant->ParticipantId]) }}" 
-                                      method="POST" class="inline">
+                                <form id="remove-participant-{{ $participant->ParticipantId }}" 
+                                      action="{{ route('project.participants.destroy', [$project->ProjectId, $participant->ParticipantId]) }}" 
+                                      method="POST" class="hidden">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
-                                            class="text-red-600 hover:text-red-900 text-sm"
-                                            onclick="return confirm('Remove this participant from the project?')">
-                                        Remove
-                                    </button>
                                 </form>
+                                <button onclick="removeParticipant({{ $participant->ParticipantId }}, '{{ $participant->FullName }}')" 
+                                        class="text-red-600 hover:text-red-900 text-sm">
+                                    Remove
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -213,5 +213,16 @@
             skillRoleSelect.value = 'Designer';
         }
     });
+
+    // Remove participant function
+    function removeParticipant(participantId, participantName) {
+        const form = document.getElementById(`remove-participant-${participantId}`);
+        
+        confirmDelete({
+            title: 'Remove Participant',
+            message: `Are you sure you want to remove "${participantName}" from this project?`,
+            form: form
+        });
+    }
 </script>
 @endpush

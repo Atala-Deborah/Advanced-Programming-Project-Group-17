@@ -69,14 +69,30 @@
                 <div>
                     <h3 class="text-sm font-medium text-gray-500">Artifact</h3>
                     <p class="mt-1">
-                        @if(Storage::disk('public')->exists($outcome->ArtifactLink))
-                            <a href="{{ Storage::url($outcome->ArtifactLink) }}" 
+                        @if(filter_var($outcome->ArtifactLink, FILTER_VALIDATE_URL))
+                            <a href="{{ $outcome->ArtifactLink }}" 
                                target="_blank" 
-                               class="text-blue-600 hover:underline">
+                               class="text-blue-600 hover:underline inline-flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                                View External Artifact
+                            </a>
+                        @elseif(Storage::disk('public')->exists($outcome->ArtifactLink))
+                            <a href="{{ route('outcomes.download', $outcome->OutcomeId) }}" 
+                               class="text-blue-600 hover:underline inline-flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
                                 Download Artifact
                             </a>
                         @else
-                            <span class="text-red-500">File not found</span>
+                            <span class="text-red-500 inline-flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                File not found
+                            </span>
                         @endif
                     </p>
                 </div>
@@ -92,15 +108,30 @@
     </div>
 
     <div class="mt-6 flex justify-end">
-        <form action="{{ route('outcomes.destroy', $outcome->OutcomeId) }}" method="POST" class="inline">
+        <form id="delete-outcome-form" action="{{ route('outcomes.destroy', $outcome->OutcomeId) }}" method="POST" class="hidden">
             @csrf
             @method('DELETE')
-            <button type="submit" 
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-                    onclick="return confirm('Are you sure you want to delete this outcome?')">
-                Delete Outcome
-            </button>
         </form>
+        <button onclick="deleteOutcome()" 
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+            Delete Outcome
+        </button>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    // Delete outcome function
+    function deleteOutcome() {
+        const form = document.getElementById('delete-outcome-form');
+        
+        confirmDelete({
+            title: 'Delete Outcome',
+            message: `Are you sure you want to delete "{{ $outcome->Title }}"?`,
+            form: form
+        });
+    }
+</script>
+@endpush
+
 @endsection

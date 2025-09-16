@@ -115,4 +115,34 @@ class OutcomeController extends Controller
             'project' => $project
         ]);
     }
+
+    /**
+     * Download an outcome artifact file.
+     *
+     * @param  \App\Models\Outcome  $outcome
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadArtifact(Outcome $outcome)
+    {
+        if (!$outcome->ArtifactLink) {
+            abort(404, 'No artifact found for this outcome.');
+        }
+
+        // Check if it's a URL (external link)
+        if (filter_var($outcome->ArtifactLink, FILTER_VALIDATE_URL)) {
+            return redirect($outcome->ArtifactLink);
+        }
+
+        // Check if file exists in storage
+        if (!Storage::disk('public')->exists($outcome->ArtifactLink)) {
+            abort(404, 'Artifact file not found.');
+        }
+
+        // Get file path and info
+        $filePath = Storage::disk('public')->path($outcome->ArtifactLink);
+        $fileName = basename($outcome->ArtifactLink);
+        
+        // Return file download response
+        return response()->download($filePath, $fileName);
+    }
 }

@@ -35,6 +35,7 @@ Route::delete('/projects/{project}/equipment/{equipment}', [ProjectController::c
 
 // Facilities
 Route::get('/facilities/{facility}/delete', [FacilityController::class, 'confirmDelete'])->name('facilities.delete-confirm');
+Route::get('/facilities/{facility}/dependencies', [FacilityController::class, 'getDependencies'])->name('facilities.dependencies');
 Route::resource('facilities', FacilityController::class);
 
 // Services
@@ -48,6 +49,7 @@ Route::resource('participants', ParticipantController::class);
 
 // Outcomes Routes
 Route::resource('outcomes', OutcomeController::class);
+Route::get('outcomes/{outcome}/download', [OutcomeController::class, 'downloadArtifact'])->name('outcomes.download');
 
 // Redirect /home to dashboard
 Route::get('/home', function() {

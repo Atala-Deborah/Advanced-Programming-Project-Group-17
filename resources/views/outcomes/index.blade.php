@@ -92,14 +92,16 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <a href="{{ route('outcomes.show', $outcome->OutcomeId) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
                             <a href="{{ route('outcomes.edit', $outcome->OutcomeId) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                            <form action="{{ route('outcomes.destroy', $outcome->OutcomeId) }}" method="POST" class="inline">
+                            <form id="delete-outcome-{{ $outcome->OutcomeId }}" 
+                                  action="{{ route('outcomes.destroy', $outcome->OutcomeId) }}" 
+                                  method="POST" class="hidden">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900" 
-                                    onclick="return confirm('Are you sure you want to delete this outcome?')">
-                                    Delete
-                                </button>
                             </form>
+                            <button onclick="deleteOutcome({{ $outcome->OutcomeId }}, '{{ $outcome->Title }}')" 
+                                    class="text-red-600 hover:text-red-900">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 @empty
@@ -121,4 +123,20 @@
         {{ $outcomes->links() }}
     </div>
 </div>
+
+@push('scripts')
+<script>
+    // Delete outcome function
+    function deleteOutcome(outcomeId, outcomeTitle) {
+        const form = document.getElementById(`delete-outcome-${outcomeId}`);
+        
+        confirmDelete({
+            title: 'Delete Outcome',
+            message: `Are you sure you want to delete the outcome "${outcomeTitle}"?`,
+            form: form
+        });
+    }
+</script>
+@endpush
+
 @endsection

@@ -23,15 +23,10 @@ class ProgramController extends Controller
         $validated = $request->validate([
             'Name' => 'required|string|max:255',
             'Description' => 'nullable|string',
-            'NationalAlignment' => 'nullable|string',
-            'FocusAreas' => 'nullable|string',
-            'Phases' => 'nullable|string',
+            'NationalAlignment' => 'nullable|in:NDPIII,Roadmap,4IR',
+            'FocusAreas' => 'nullable|in:IoT,Automation,Renewable Energy,Biotechnology,AI/ML,Robotics',
+            'Phases' => 'nullable|in:Cross-Skilling,Collaboration,Technical Skills,Prototyping,Commercialization',
         ]);
-
-        // Convert comma-separated phases to array
-        if (!empty($validated['Phases'])) {
-            $validated['Phases'] = array_map('trim', explode(',', $validated['Phases']));
-        }
 
         Program::create($validated);
 
@@ -54,15 +49,10 @@ class ProgramController extends Controller
         $validated = $request->validate([
             'Name' => 'required|string|max:255',
             'Description' => 'nullable|string',
-            'NationalAlignment' => 'nullable|string',
-            'FocusAreas' => 'nullable|string',
-            'Phases' => 'nullable|string',
+            'NationalAlignment' => 'nullable|in:NDPIII,Roadmap,4IR',
+            'FocusAreas' => 'nullable|in:IoT,Automation,Renewable Energy,Biotechnology,AI/ML,Robotics',
+            'Phases' => 'nullable|in:Cross-Skilling,Collaboration,Technical Skills,Prototyping,Commercialization',
         ]);
-
-        // Convert comma-separated phases to array
-        if (!empty($validated['Phases'])) {
-            $validated['Phases'] = array_map('trim', explode(',', $validated['Phases']));
-        }
 
         $program->update($validated);
 
