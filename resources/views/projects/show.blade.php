@@ -71,30 +71,54 @@
                 </div>
 
                 <div class="mt-8">
-                    <h2 class="text-xl font-semibold mb-4">Project Participants</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Project Participants ({{ $project->participants->count() }})</h2>
+                        <a href="{{ route('project.participants.manage', $project->ProjectId) }}"
+                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                            </svg>
+                            Manage Participants
+                        </a>
+                    </div>
                     @if($project->participants->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full">
-                                <thead>
-                                    <tr class="bg-gray-100">
-                                        <th class="py-3 px-6 text-left">Name</th>
-                                        <th class="py-3 px-6 text-left">Role</th>
-                                        <th class="py-3 px-6 text-left">Joined Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($project->participants as $participant)
-                                        <tr class="border-b">
-                                            <td class="py-4 px-6">{{ $participant->name }}</td>
-                                            <td class="py-4 px-6">{{ $participant->pivot->role }}</td>
-                                            <td class="py-4 px-6">{{ $participant->pivot->created_at->format('Y-m-d') }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        <div class="grid gap-4">
+                            @foreach($project->participants as $participant)
+                                <div class="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                            <span class="text-sm font-medium text-indigo-700">
+                                                {{ substr($participant->FullName, 0, 2) }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">{{ $participant->FullName }}</div>
+                                            <div class="text-sm text-gray-500">{{ $participant->Email }}</div>
+                                            <div class="flex gap-2 mt-1">
+                                                <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
+                                                    {{ $participant->pivot->RoleOnProject }}
+                                                </span>
+                                                <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
+                                                    {{ $participant->pivot->SkillRole }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('participants.show', $participant->ParticipantId) }}" 
+                                           class="text-indigo-600 hover:text-indigo-900 text-sm">View Profile</a>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     @else
-                        <p class="text-gray-600">No participants assigned to this project.</p>
+                        <div class="bg-gray-50 rounded-lg p-8 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">No participants assigned</h3>
+                            <p class="mt-1 text-sm text-gray-500">Get started by adding participants to this project.</p>
+                        </div>
                     @endif
                 </div>
             </div>

@@ -66,36 +66,93 @@
     <!-- Projects Section -->
     <div class="mt-8">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Projects</h2>
+            <h2 class="text-xl font-bold">Associated Projects ({{ $participant->projects->count() }})</h2>
+            @if($participant->projects->count() > 0)
+                <div class="text-sm text-gray-500">
+                    Total active projects: {{ $participant->projects->where('Status', 'Active')->count() }}
+                </div>
+            @endif
         </div>
 
         @if($participant->projects->count() > 0)
-            <div class="bg-white shadow overflow-hidden sm:rounded-md">
-                <ul class="divide-y divide-gray-200">
-                    @foreach($participant->projects as $project)
-                        <li>
-                            <div class="px-4 py-4 sm:px-6">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <a href="{{ route('projects.show', $project->ProjectId) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
+            <div class="grid gap-4">
+                @foreach($participant->projects as $project)
+                    <div class="bg-white shadow rounded-lg border border-gray-200 overflow-hidden">
+                        <div class="px-6 py-4">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('projects.show', $project->ProjectId) }}" 
+                                           class="text-lg font-semibold text-indigo-600 hover:text-indigo-900">
                                             {{ $project->Title }}
                                         </a>
-                                        <p class="mt-1 text-sm text-gray-500">
-                                            {{ $project->pivot->RoleOnProject }} - {{ $project->pivot->SkillRole }}
-                                        </p>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            @if($project->Status == 'Active') bg-green-100 text-green-800
+                                            @elseif($project->Status == 'Completed') bg-blue-100 text-blue-800
+                                            @else bg-gray-100 text-gray-800 @endif">
+                                            {{ $project->Status }}
+                                        </span>
                                     </div>
-                                    <div class="text-sm text-gray-500">
-                                        {{ $project->StartDate->format('M d, Y') }} - {{ $project->EndDate?->format('M d, Y') ?? 'Present' }}
+                                    <p class="mt-1 text-sm text-gray-600">{{ $project->Description }}</p>
+                                    
+                                    <!-- Role Information -->
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
+                                            Role: {{ $project->pivot->RoleOnProject }}
+                                        </span>
+                                        <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
+                                            Skill: {{ $project->pivot->SkillRole }}
+                                        </span>
+                                    </div>
+
+                                    <!-- Project Details -->
+                                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-500">
+                                        <div>
+                                            <span class="font-medium">Innovation Focus:</span> {{ $project->InnovationFocus }}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">Prototype Stage:</span> {{ $project->PrototypeStage }}
+                                        </div>
                                     </div>
                                 </div>
+                                
+                                <div class="text-right text-sm text-gray-500 ml-4">
+                                    <div class="font-medium">Duration</div>
+                                    <div>{{ $project->StartDate->format('M d, Y') }}</div>
+                                    <div class="text-xs">to</div>
+                                    <div>{{ $project->EndDate?->format('M d, Y') ?? 'Present' }}</div>
+                                </div>
                             </div>
-                        </li>
-                    @endforeach
-                </ul>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Project Statistics -->
+            <div class="mt-6 bg-gray-50 rounded-lg p-4">
+                <h3 class="text-lg font-medium text-gray-900 mb-3">Project Involvement Summary</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-indigo-600">{{ $participant->projects->count() }}</div>
+                        <div class="text-sm text-gray-500">Total Projects</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600">{{ $participant->projects->where('Status', 'Active')->count() }}</div>
+                        <div class="text-sm text-gray-500">Active Projects</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600">{{ $participant->projects->where('Status', 'Completed')->count() }}</div>
+                        <div class="text-sm text-gray-500">Completed Projects</div>
+                    </div>
+                </div>
             </div>
         @else
-            <div class="bg-white shadow overflow-hidden sm:rounded-md p-6 text-center">
-                <p class="text-gray-500">This participant is not associated with any projects yet.</p>
+            <div class="bg-white shadow overflow-hidden sm:rounded-md p-8 text-center">
+                <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No projects assigned</h3>
+                <p class="mt-1 text-sm text-gray-500">This participant is not currently associated with any projects.</p>
             </div>
         @endif
     </div>

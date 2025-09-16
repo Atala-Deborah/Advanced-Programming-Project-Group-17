@@ -23,6 +23,7 @@ Route::resource('projects', ProjectController::class);
 Route::get('facility/{facilityId}/projects', [ProjectController::class, 'byFacility'])->name('projects.by_facility');
 
 // Project Participants
+Route::get('/projects/{project}/participants/manage', [ProjectParticipantController::class, 'show'])->name('project.participants.manage');
 Route::post('/projects/{project}/participants', [ProjectParticipantController::class, 'store'])->name('project.participants.store');
 Route::delete('/projects/{project}/participants/{participant}', [ProjectParticipantController::class, 'destroy'])->name('project.participants.destroy');
 

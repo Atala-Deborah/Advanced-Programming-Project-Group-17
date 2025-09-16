@@ -7,10 +7,47 @@ use Illuminate\Http\Request;
 
 class ParticipantController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $participants = Participant::paginate(10);
-        return view('participants.index', compact('participants'));
+        $query = Participant::query();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('FullName', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('Email', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Filter by Institution
+        if ($request->filled('institution')) {
+            $query->where('Institution', $request->institution);
+        }
+
+        // Filter by Specialization
+        if ($request->filled('specialization')) {
+            $query->where('Specialization', $request->specialization);
+        }
+
+        // Filter by Affiliation
+        if ($request->filled('affiliation')) {
+            $query->where('Affiliation', $request->affiliation);
+        }
+
+        // Filter by Cross-Skill Trained status
+        if ($request->filled('cross_skill')) {
+            $query->where('CrossSkillTrained', $request->cross_skill === '1');
+        }
+
+        $participants = $query->with('projects')->paginate(10)->appends($request->query());
+
+        // Get filter options for dropdowns
+        $institutions = ['SCIT', 'CEDAT', 'UniPod', 'UIRI', 'Lwera', 'Other'];
+        $specializations = ['Software', 'Hardware', 'Business'];
+        $affiliations = ['CS', 'SE', 'Engineering', 'Other'];
+
+        return view('participants.index', compact('participants', 'institutions', 'specializations', 'affiliations'));
     }
 
     public function create()
@@ -28,9 +65,9 @@ class ParticipantController extends Controller
         $validated = $request->validate([
             'FullName' => 'required|string|max:255',
             'Email' => 'required|email|unique:participants,Email',
-            'Affiliation' => 'required|string|max:255',
-            'Specialization' => 'required|string|max:255',
-            'Institution' => 'required|string|max:255',
+            'Affiliation' => 'required|in:CS,SE,Engineering,Other',
+            'Specialization' => 'required|in:Software,Hardware,Business',
+            'Institution' => 'required|in:SCIT,CEDAT,UniPod,UIRI,Lwera,Other',
             'CrossSkillTrained' => 'boolean'
         ]);
 
@@ -56,12 +93,17 @@ class ParticipantController extends Controller
 
     public function update(Request $request, Participant $participant)
     {
+        // Convert checkbox value to boolean
+        $request->merge([
+            'CrossSkillTrained' => $request->has('CrossSkillTrained')
+        ]);
+
         $validated = $request->validate([
             'FullName' => 'required|string|max:255',
             'Email' => 'required|email|unique:participants,Email,' . $participant->ParticipantId . ',ParticipantId',
-            'Affiliation' => 'required|string|max:255',
-            'Specialization' => 'required|string|max:255',
-            'Institution' => 'required|string|max:255',
+            'Affiliation' => 'required|in:CS,SE,Engineering,Other',
+            'Specialization' => 'required|in:Software,Hardware,Business',
+            'Institution' => 'required|in:SCIT,CEDAT,UniPod,UIRI,Lwera,Other',
             'CrossSkillTrained' => 'boolean'
         ]);
 
