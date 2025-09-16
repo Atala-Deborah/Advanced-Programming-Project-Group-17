@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-r from-[#070600] to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="flex-1">
@@ -185,7 +185,7 @@
                                     @csrf
                                     @method('DELETE')
                                 </form>
-                                <button onclick="deleteParticipant({{ $participant->ParticipantId }}, '{{ $participant->FullName }}')" 
+                                <button onclick="deleteParticipant({{ $participant->ParticipantId }}, {{ json_encode($participant->FullName) }})" 
                                         class="text-red-600 hover:text-red-900">
                                     Delete
                                 </button>
@@ -214,16 +214,8 @@
 
 @push('scripts')
 <script>
-    // Delete participant function
-    function deleteParticipant(participantId, participantName) {
-        const form = document.getElementById(`delete-participant-${participantId}`);
-        
-        confirmDelete({
-            title: 'Delete Participant',
-            message: `Are you sure you want to delete "${participantName}"? This will also remove them from all projects they are part of.`,
-            form: form
-        });
-    }
+    // Participants use the universal delete function
+    console.log('Participants index script loaded');
 </script>
 @endpush
 

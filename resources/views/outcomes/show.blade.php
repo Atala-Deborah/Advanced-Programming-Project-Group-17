@@ -2,7 +2,16 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between    // Delete outcome function
+    function deleteOutcome(outcomeId, outcomeTitle) {
+        console.log('deleteOutcome called for show page:', outcomeId, outcomeTitle);
+        const form = document.getElementById('delete-outcome-form');
+        
+        if (!form) {
+            console.error('Form not found for outcome show page');
+            alert('Error: Form not found. Please refresh the page.');
+            return;
+        }nter mb-6">
         <div>
             <h1 class="text-2xl font-bold">{{ $outcome->Title }}</h1>
             <p class="text-gray-600">Outcome Details</p>
@@ -112,7 +121,7 @@
             @csrf
             @method('DELETE')
         </form>
-        <button onclick="deleteOutcome()" 
+        <button onclick="deleteOutcome({{ $outcome->OutcomeId }}, {{ json_encode($outcome->Title) }})" 
                 class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
             Delete Outcome
         </button>
@@ -121,16 +130,12 @@
 
 @push('scripts')
 <script>
-    // Delete outcome function
-    function deleteOutcome() {
-        const form = document.getElementById('delete-outcome-form');
-        
-        confirmDelete({
-            title: 'Delete Outcome',
-            message: `Are you sure you want to delete "{{ $outcome->Title }}"?`,
-            form: form
-        });
+    // Outcome show page uses special form ID
+    function deleteOutcome(outcomeId, outcomeTitle) {
+        universalDelete('outcome', outcomeId, outcomeTitle, '#delete-outcome-form');
     }
+    
+    console.log('Outcome show script loaded');
 </script>
 @endpush
 

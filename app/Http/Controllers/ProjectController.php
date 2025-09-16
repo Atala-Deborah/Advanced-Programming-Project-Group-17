@@ -217,10 +217,69 @@ class ProjectController extends Controller
         return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully');
     }
 
-    public function destroy(Project $project)
+    public function getDependencies(Project $project)
     {
+        $dependencies = [];
+        
+        // Check for participants
+        $participantsCount = $project->participants()->count();
+        if ($participantsCount > 0) {
+            $participantNames = $project->participants()->take(3)->pluck('FullName')->toArray();
+            $participantText = $participantsCount === 1 ? 'participant assignment' : 'participant assignments';
+            
+            if ($participantsCount <= 3) {
+                $dependencies[] = "{$participantsCount} {$participantText} (" . implode(', ', $participantNames) . ") will be removed";
+            } else {
+                $dependencies[] = "{$participantsCount} {$participantText} (" . implode(', ', $participantNames) . " and " . ($participantsCount - 3) . " more) will be removed";
+            }
+        }
+        
+        // Check for equipment
+        $equipmentCount = $project->equipment()->count();
+        if ($equipmentCount > 0) {
+            $equipmentNames = $project->equipment()->take(2)->pluck('Name')->toArray();
+            $equipmentText = $equipmentCount === 1 ? 'equipment assignment' : 'equipment assignments';
+            
+            if ($equipmentCount <= 2) {
+                $dependencies[] = "{$equipmentCount} {$equipmentText} (" . implode(', ', $equipmentNames) . ") will be removed";
+            } else {
+                $dependencies[] = "{$equipmentCount} {$equipmentText} (" . implode(', ', $equipmentNames) . " and " . ($equipmentCount - 2) . " more) will be removed";
+            }
+        }
+        
+        return response()->json([
+            'dependencies' => $dependencies,
+            'reassignOptions' => [] // Projects don't typically get reassigned
+        ]);
+    }
+
+    public function destroy(Request $request, Project $project)
+    {
+        $deleteAction = $request->input('delete_action', 'cascade');
+        
+        // Count assignments before deletion for success message
+        $participantCount = $project->participants()->count();
+        $equipmentCount = $project->equipment()->count();
+        
+        // The database has cascade delete configured on the foreign keys,
+        // so participant and equipment assignments will be automatically removed
+        // when the project is deleted. No need to manually detach.
+        
         $project->delete();
-        return redirect()->route('projects.index')->with('success', 'Project deleted successfully');
+        
+        $message = 'Project deleted successfully';
+        if ($participantCount > 0 || $equipmentCount > 0) {
+            $removedItems = [];
+            if ($participantCount > 0) {
+                $removedItems[] = "{$participantCount} participant " . ($participantCount === 1 ? 'assignment' : 'assignments');
+            }
+            if ($equipmentCount > 0) {
+                $removedItems[] = "{$equipmentCount} equipment " . ($equipmentCount === 1 ? 'assignment' : 'assignments');
+            }
+            $message .= '. Removed ' . implode(' and ', $removedItems) . '.';
+        }
+        
+        return redirect()->route('projects.index')->with('success', $message);
     }
 
     public function attachEquipment(Request $request, Project $project, Equipment $equipment)

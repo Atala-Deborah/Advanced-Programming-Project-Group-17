@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-r from-[#070600] to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="flex-1">
@@ -98,7 +98,7 @@
                                 @csrf
                                 @method('DELETE')
                             </form>
-                            <button onclick="deleteOutcome({{ $outcome->OutcomeId }}, '{{ $outcome->Title }}')" 
+                            <button onclick="deleteOutcome({{ $outcome->OutcomeId }}, {{ json_encode($outcome->Title) }})" 
                                     class="text-red-600 hover:text-red-900">
                                 Delete
                             </button>
@@ -126,16 +126,8 @@
 
 @push('scripts')
 <script>
-    // Delete outcome function
-    function deleteOutcome(outcomeId, outcomeTitle) {
-        const form = document.getElementById(`delete-outcome-${outcomeId}`);
-        
-        confirmDelete({
-            title: 'Delete Outcome',
-            message: `Are you sure you want to delete the outcome "${outcomeTitle}"?`,
-            form: form
-        });
-    }
+    // Outcomes use the universal delete function  
+    console.log('Outcomes index script loaded');
 </script>
 @endpush
 

@@ -77,6 +77,13 @@ class EquipmentController extends Controller
         return view('equipment.facility', compact('equipment'));
     }
 
+    // Show individual equipment
+    public function show(Equipment $equipment)
+    {
+        $equipment->load('facility');
+        return view('equipment.show', compact('equipment'));
+    }
+
     // Show create form
     public function create()
     {
@@ -112,13 +119,13 @@ class EquipmentController extends Controller
     public function update(Request $request, Equipment $equipment)
     {
         $validated = $request->validate([
-            'FacilityId' => 'required|exists:facilities,id',
+            'FacilityId' => 'required|exists:facilities,FacilityId',
             'Name' => 'required|string|max:255',
             'Capabilities' => 'required|string',
             'Description' => 'nullable|string',
             'InventoryCode' => 'required|unique:equipment,InventoryCode,' . $equipment->EquipmentId . ',EquipmentId',
-            'UsageDomain' => 'required|string',
-            'SupportPhase' => 'required|string'
+            'UsageDomain' => 'required|string|in:Electronics,Mechanical,IoT',
+            'SupportPhase' => 'required|string|in:Training,Prototyping'
         ]);
 
         $equipment->update($validated);

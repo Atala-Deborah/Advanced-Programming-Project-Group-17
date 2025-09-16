@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'CollaBox') }}</title>
+    <title>CollaBox - Group 17</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -25,7 +25,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(255, 255, 255, 0.9); 
+            background: rgba(255, 255, 255, 0.83); 
             z-index: -1;
         }
 
@@ -39,6 +39,7 @@
             justify-content: center;
             text-align: center;
             color: white;
+            padding-left: 256px; /* Adjusting to account for sidebar width */
         }
         .hero::before {
             content: "";
@@ -71,7 +72,7 @@
         }
         
         .nav-link.active {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(135deg, #070600, #1d4ed8);
             color: white;
             transform: translateX(6px);
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
@@ -95,7 +96,7 @@
         <section class="hero flex-shrink-0">
             <div class="hero-content">
                 <img src="{{ asset('logowhite.png') }}" alt="CollaBox Logo">
-                <h1 class="text-2xl md:text-3xl font-bold">Facility Management System</h1>
+                <h1 class="text-2xl md:text-3xl font-bold">Project Management System</h1>
             </div>
         </section>
 
@@ -219,8 +220,8 @@
             <footer class="bg-gray-50 border-t border-gray-200 py-6 mt-auto">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="text-center text-sm text-gray-500">
-                        <p>&copy; {{ date('Y') }} Advanced Programming Capstone Project. All rights reserved.</p>
-                        <p class="mt-1">Innovation Hub Management System - Group 17</p>
+                        <p>&copy; {{ date('Y') }} CollaBox - All rights reserved!</p>
+                        <p class="mt-1">A Project Management System by Group 17</p>
                     </div>
                 </div>
             </footer>
@@ -229,6 +230,35 @@
 
     <!-- Include Delete Modal Component -->
     @include('components.delete-modal')
+    
+    <!-- Include Universal Delete Functions -->
+    <script>
+        @include('components.universal-delete')
+    </script>
+
+    <!-- Global JavaScript -->
+    <script>
+        // Ensure basic functionality even if modal fails
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, checking modal...');
+            
+            // Wait a bit for modal to initialize
+            setTimeout(function() {
+                if (!window.deleteModal) {
+                    console.warn('Delete modal not initialized, creating fallback');
+                    
+                    // Simple fallback function
+                    window.confirmDeleteFallback = function(message, form) {
+                        if (confirm(message || 'Are you sure?')) {
+                            if (form) {
+                                form.submit();
+                            }
+                        }
+                    };
+                }
+            }, 1000);
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

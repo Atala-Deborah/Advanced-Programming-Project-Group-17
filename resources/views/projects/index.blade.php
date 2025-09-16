@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-4 py-8 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-r from-[#070600] to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="flex-1">
@@ -196,17 +196,18 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </a>
-                                            <form action="{{ route('projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this project?')">
+                                            <form id="delete-form-project-{{ $project->ProjectId }}" action="{{ route('projects.destroy', $project) }}" method="POST" style="display: none;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
-                                                        class="inline-flex items-center p-2 border border-gray-300 rounded-full shadow-sm text-gray-400 hover:text-red-600 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                                        title="Delete">
-                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 22H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
                                             </form>
+                                            <button type="button" 
+                                                    onclick="deleteProject({{ $project->ProjectId }}, {{ json_encode($project->Title) }})"
+                                                    class="inline-flex items-center p-2 border border-gray-300 rounded-full shadow-sm text-gray-400 hover:text-red-600 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                    title="Delete">
+                                                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 22H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -267,4 +268,52 @@
         @endif
     </div>
 </div>
+
+<script>
+function deleteProject(projectId, projectTitle) {
+    const form = document.getElementById(`delete-form-project-${projectId}`);
+    const dependenciesUrl = `/projects/${projectId}/dependencies`;
+    
+    console.log('Deleting project:', projectId, projectTitle);
+    console.log('Form found:', !!form);
+    console.log('Dependencies URL:', dependenciesUrl);
+    
+    // Check if modal is available
+    if (window.deleteModal && typeof window.deleteModal.show === 'function') {
+        console.log('Using modal for project delete');
+        
+        // Fetch dependencies first
+        fetch(dependenciesUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Dependencies data:', data);
+                
+                window.deleteModal.show({
+                    title: `Delete Project: ${projectTitle}`,
+                    message: `Are you sure you want to delete "${projectTitle}"? This action cannot be undone.`,
+                    form: form,
+                    dependencies: data.dependencies,
+                    reassignOptions: data.reassignOptions || []
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching dependencies:', error);
+                // Show modal without dependencies
+                window.deleteModal.show({
+                    title: `Delete Project: ${projectTitle}`,
+                    message: `Are you sure you want to delete "${projectTitle}"? This action cannot be undone.`,
+                    form: form
+                });
+            });
+    } else {
+        console.log('Modal not available, using browser confirm');
+        // Fallback to browser confirm
+        if (confirm(`Are you sure you want to delete "${projectTitle}"? This action cannot be undone.`)) {
+            if (form) {
+                form.submit();
+            }
+        }
+    }
+}
+</script>
 @endsection

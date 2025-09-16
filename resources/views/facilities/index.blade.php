@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-r from-[#070600] to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="flex-1">
@@ -174,7 +174,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </a>
-                                            <button onclick="deleteFacility({{ $facility->FacilityId }}, '{{ $facility->Name }}')" 
+                                            <button onclick="deleteFacility({{ $facility->FacilityId }}, {{ json_encode($facility->Name) }})" 
                                                     class="text-red-600 hover:text-red-900"
                                                     title="Delete">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -310,33 +310,44 @@
         });
     });
 
-    // Delete facility function
+    // Delete facility function with dependency checking
     async function deleteFacility(facilityId, facilityName) {
+        console.log('deleteFacility called:', facilityId, facilityName);
+        
+        const form = document.getElementById(`delete-facility-${facilityId}`);
+        
+        if (!form) {
+            console.error('Form not found for facility:', facilityId);
+            alert('Error: Could not find delete form. Please refresh the page.');
+            return;
+        }
+        
+        // Simple version first - just use universal delete
+        universalDelete('facility', facilityId, facilityName);
+        
+        /* TODO: Add back dependency checking later
         try {
             // Fetch dependencies
             const response = await fetch(`/facilities/${facilityId}/dependencies`);
             const data = await response.json();
             
-            const form = document.getElementById(`delete-facility-${facilityId}`);
-            
-            confirmDelete({
-                title: 'Delete Facility',
-                message: `Are you sure you want to delete "${facilityName}"?`,
-                form: form,
-                dependencies: data.dependencies.length > 0 ? data.dependencies : null,
-                reassignOptions: data.alternatives || []
-            });
+            if (window.deleteModal && typeof window.deleteModal.show === 'function') {
+                window.deleteModal.show({
+                    title: 'Delete Facility',
+                    message: `Are you sure you want to delete "${facilityName}"?`,
+                    form: form,
+                    dependencies: data.dependencies.length > 0 ? data.dependencies : null,
+                    reassignOptions: data.alternatives || []
+                });
+            } else {
+                throw new Error('Modal not available');
+            }
         } catch (error) {
-            console.error('Error fetching dependencies:', error);
-            
-            // Fallback to simple confirmation
-            const form = document.getElementById(`delete-facility-${facilityId}`);
-            confirmDelete({
-                title: 'Delete Facility',
-                message: `Are you sure you want to delete "${facilityName}"?`,
-                form: form
-            });
+            console.error('Error with modal or dependencies:', error);
+            // Fallback to universal delete
+            universalDelete('facility', facilityId, facilityName);
         }
+        */
     }
 </script>
 @endpush

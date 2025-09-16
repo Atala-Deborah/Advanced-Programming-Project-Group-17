@@ -19,6 +19,7 @@ Route::get('/', function () {
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 // Projects
+Route::get('/projects/{project}/dependencies', [ProjectController::class, 'getDependencies'])->name('projects.dependencies');
 Route::resource('projects', ProjectController::class);
 Route::get('facility/{facilityId}/projects', [ProjectController::class, 'byFacility'])->name('projects.by_facility');
 

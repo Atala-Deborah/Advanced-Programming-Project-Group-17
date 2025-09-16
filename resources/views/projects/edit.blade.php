@@ -27,7 +27,7 @@
                     Project Name
                 </label>
                 <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="Name" type="text" name="Name" value="{{ old('Name', $project->Name) }}" required>
+                    id="Name" type="text" name="Name" value="{{ old('Name', $project->Title) }}" required>
             </div>
 
             <div class="mb-4">

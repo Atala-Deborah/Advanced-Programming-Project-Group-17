@@ -69,7 +69,7 @@
                                     @csrf
                                     @method('DELETE')
                                 </form>
-                                <button onclick="removeParticipant({{ $participant->ParticipantId }}, '{{ $participant->FullName }}')" 
+                                <button onclick="removeParticipant({{ $participant->ParticipantId }}, {{ json_encode($participant->FullName) }})" 
                                         class="text-red-600 hover:text-red-900 text-sm">
                                     Remove
                                 </button>
@@ -216,13 +216,9 @@
 
     // Remove participant function
     function removeParticipant(participantId, participantName) {
-        const form = document.getElementById(`remove-participant-${participantId}`);
-        
-        confirmDelete({
-            title: 'Remove Participant',
-            message: `Are you sure you want to remove "${participantName}" from this project?`,
-            form: form
-        });
+        console.log('removeParticipant called:', participantId, participantName);
+        // Use universal delete with custom form selector
+        universalDelete('participant', participantId, participantName, `#remove-participant-${participantId}`);
     }
 </script>
 @endpush

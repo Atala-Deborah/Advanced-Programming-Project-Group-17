@@ -114,19 +114,34 @@ class FacilityController extends Controller
         // Check for projects
         $projectCount = $facility->projects()->count();
         if ($projectCount > 0) {
-            $dependencies[] = "{$projectCount} project(s)";
+            $projectNames = $facility->projects()->take(3)->pluck('Title')->toArray();
+            if ($projectCount <= 3) {
+                $dependencies[] = "{$projectCount} project(s) (" . implode(', ', $projectNames) . ") will be reassigned or deleted";
+            } else {
+                $dependencies[] = "{$projectCount} project(s) (" . implode(', ', $projectNames) . " and " . ($projectCount - 3) . " more) will be reassigned or deleted";
+            }
         }
         
-        // Check for equipment
+        // Check for equipment  
         $equipmentCount = $facility->equipment()->count();
         if ($equipmentCount > 0) {
-            $dependencies[] = "{$equipmentCount} equipment item(s)";
+            $equipmentNames = $facility->equipment()->take(3)->pluck('Name')->toArray();
+            if ($equipmentCount <= 3) {
+                $dependencies[] = "{$equipmentCount} equipment item(s) (" . implode(', ', $equipmentNames) . ") will be reassigned or deleted";
+            } else {
+                $dependencies[] = "{$equipmentCount} equipment item(s) (" . implode(', ', $equipmentNames) . " and " . ($equipmentCount - 3) . " more) will be reassigned or deleted";
+            }
         }
         
         // Check for services
         $serviceCount = $facility->services()->count();
         if ($serviceCount > 0) {
-            $dependencies[] = "{$serviceCount} service(s)";
+            $serviceNames = $facility->services()->take(3)->pluck('Name')->toArray();
+            if ($serviceCount <= 3) {
+                $dependencies[] = "{$serviceCount} service(s) (" . implode(', ', $serviceNames) . ") will be reassigned or deleted";
+            } else {
+                $dependencies[] = "{$serviceCount} service(s) (" . implode(', ', $serviceNames) . " and " . ($serviceCount - 3) . " more) will be reassigned or deleted";
+            }
         }
         
         // Get alternative facilities for reassignment
@@ -142,7 +157,7 @@ class FacilityController extends Controller
         
         return response()->json([
             'dependencies' => $dependencies,
-            'alternatives' => $alternatives
+            'reassignOptions' => $alternatives->toArray()
         ]);
     }
 

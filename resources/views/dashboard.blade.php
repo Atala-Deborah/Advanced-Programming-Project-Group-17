@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-    </div>
+    <!-- <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Welcome Back!</h1>
+    </div> -->
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
