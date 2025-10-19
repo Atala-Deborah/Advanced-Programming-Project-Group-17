@@ -51,4 +51,9 @@ class Project extends Model
             'ParticipantId'
         )->withPivot(['RoleOnProject', 'SkillRole']);
     }
+
+    public function outcomes()
+    {
+        return $this->hasMany(Outcome::class, 'ProjectId', 'ProjectId');
+    }
 }
