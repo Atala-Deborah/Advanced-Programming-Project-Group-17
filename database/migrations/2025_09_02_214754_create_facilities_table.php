@@ -20,6 +20,8 @@ return new class extends Migration
         $table->string('FacilityType'); // Lab, Workshop, Testing Center
         $table->string('Capabilities')->nullable();
         $table->timestamps();
+
+        $table->unique(['Name', 'Location']);
     });
 }
 
