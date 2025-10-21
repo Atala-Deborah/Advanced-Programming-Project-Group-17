@@ -27,4 +27,10 @@ class Service extends Model
     {
         return $this->belongsTo(Facility::class, 'FacilityId');
     }
+
+    // Relationship: A service can have many programs
+    public function programs()
+    {
+        return $this->hasMany(Program::class, 'ServiceId', 'ServiceId');
+    }
 }

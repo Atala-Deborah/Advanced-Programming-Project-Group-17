@@ -76,7 +76,12 @@ class ServiceController extends Controller
     {
         $request->validate([
             'FacilityId' => 'required|exists:facilities,FacilityId',
-            'Name' => 'required|string|max:255',
+            'Name' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:services,Name', // BR: Service.Name must be unique
+            ],
             'Description' => 'nullable|string',
             'Category' => 'required|in:Machining,Testing,Training',
             'SkillType' => 'required|in:Hardware,Software,Integration',
@@ -105,7 +110,12 @@ class ServiceController extends Controller
     {
         $request->validate([
             'FacilityId' => 'sometimes|exists:facilities,FacilityId',
-            'Name' => 'sometimes|string|max:255',
+            'Name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                'unique:services,Name,' . $service->ServiceId . ',ServiceId', // BR: Service.Name must be unique
+            ],
             'Description' => 'nullable|string',
             'Category' => 'sometimes|in:Machining,Testing,Training',
             'SkillType' => 'sometimes|in:Hardware,Software,Integration',
@@ -119,6 +129,12 @@ class ServiceController extends Controller
     // Delete a service
     public function destroy(Service $service)
     {
+        // BR: Cannot delete Service if Programs reference it
+        if ($service->programs()->exists()) {
+            return redirect()->route('services.index')
+                ->with('error', 'Cannot delete Service with associated Programs. Reassign or archive Programs first.');
+        }
+
         $service->delete();
         return redirect()->route('services.index')->with('success', 'Service deleted successfully!');
     }

@@ -20,4 +20,10 @@ class Equipment extends Model
     {
         return $this->belongsTo(Facility::class, 'FacilityId');
     }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_equipment', 'EquipmentId', 'ProjectId')
+            ->withTimestamps();
+    }
 }
