@@ -165,26 +165,59 @@ class ProjectController extends Controller
     public function create()
     {
         $facilities = Facility::orderBy('Name')->get();
+        $programs = \App\Models\Program::orderBy('Name')->get();
         $selectedFacilityId = request('facility_id');
-        return view('projects.create', compact('facilities', 'selectedFacilityId'));
+        return view('projects.create', compact('facilities', 'programs', 'selectedFacilityId'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'Title' => 'required|string|max:255',
-            'Description' => 'required|string',
-            'Status' => 'required|in:Planning,Active,Completed,On Hold',
-            'NatureOfProject' => 'required|in:Research,Prototype,Applied work',
-            'InnovationFocus' => 'nullable|string|max:255',
-            'PrototypeStage' => 'required|in:Concept,Prototype,MVP,Market Launch',
-            'StartDate' => 'required|date',
-            'EndDate' => 'nullable|date|after:StartDate',
-            'FacilityId' => 'required|exists:facilities,FacilityId'
+            'Title' => [
+                'required',
+                'string',
+                'max:100',
+                function ($attribute, $value, $fail) use ($request) {
+                    // BR: Title must be unique within Program
+                    if ($request->has('ProgramId')) {
+                        $exists = Project::where('ProgramId', $request->input('ProgramId'))
+                            ->where('Title', $value)
+                            ->exists();
+                        if ($exists) {
+                            $fail('The Title must be unique within the Program.');
+                        }
+                    }
+                },
+            ],
+            'NatureOfProject' => 'required|in:Small,Large,Other',
+            'Status' => 'required|in:Draft,Active,Completed,Archived',
+            'Phases' => 'required|in:Planning,Execution,Monitoring,Closure',
+            'Budget' => 'nullable|numeric|min:0',
+            'ActualCost' => 'nullable|numeric|min:0',
+            'StartDate' => 'nullable|date',
+            'EndDate' => 'nullable|date|after_or_equal:StartDate',
+            'FacilityId' => [
+                'required',
+                'exists:facilities,FacilityId',
+                function ($attribute, $value, $fail) use ($request) {
+                    // BR: Facility must have compatible ServiceType
+                    $facility = Facility::find($value);
+                    if ($facility && $request->has('ProgramId')) {
+                        $program = \App\Models\Program::find($request->input('ProgramId'));
+                        if ($program) {
+                            $service = $program->service;
+                            if ($service && $facility->ServiceType !== $service->ServiceType) {
+                                $fail('The selected Facility ServiceType must match the Program Service ServiceType.');
+                            }
+                        }
+                    }
+                },
+            ],
+            'ProgramId' => 'required|exists:programs,ProgramId',
         ]);
 
-        Project::create($validated);
-        return redirect()->route('projects.index')->with('success', 'Project created successfully');
+        $project = Project::create($validated);
+        return redirect()->route('projects.show', $project);
     }
 
     public function show(Project $project)
@@ -195,26 +228,69 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        $facilities = Facility::all();
-        return view('projects.edit', compact('project', 'facilities'));
+        $facilities = Facility::orderBy('Name')->get();
+        $programs = \App\Models\Program::orderBy('Name')->get();
+        return view('projects.edit', compact('project', 'facilities', 'programs'));
     }
 
     public function update(Request $request, Project $project)
     {
         $validated = $request->validate([
-            'Title' => 'required|string|max:255',
-            'Description' => 'required|string',
-            'Status' => 'required|in:Planning,Active,Completed,On Hold',
-            'NatureOfProject' => 'required|in:Research,Prototype,Applied work',
-            'InnovationFocus' => 'nullable|string|max:255',
-            'PrototypeStage' => 'required|in:Concept,Prototype,MVP,Market Launch',
-            'StartDate' => 'required|date',
-            'EndDate' => 'nullable|date|after:StartDate',
-            'FacilityId' => 'required|exists:facilities,FacilityId'
+            'Title' => [
+                'required',
+                'string',
+                'max:100',
+                function ($attribute, $value, $fail) use ($request, $project) {
+                    // BR: Title must be unique within Program
+                    if ($request->has('ProgramId')) {
+                        $exists = Project::where('ProgramId', $request->input('ProgramId'))
+                            ->where('Title', $value)
+                            ->where('ProjectId', '!=', $project->ProjectId)
+                            ->exists();
+                        if ($exists) {
+                            $fail('The Title must be unique within the Program.');
+                        }
+                    }
+                },
+            ],
+            'NatureOfProject' => 'required|in:Small,Large,Other',
+            'Status' => [
+                'required',
+                'in:Draft,Active,Completed,Archived',
+                function ($attribute, $value, $fail) use ($project) {
+                    // BR: If Status is Completed, must have at least one Outcome
+                    if ($value === 'Completed' && $project->outcomes()->count() === 0) {
+                        $fail('Cannot set Status to Completed without at least one Outcome.');
+                    }
+                },
+            ],
+            'Phases' => 'required|in:Planning,Execution,Monitoring,Closure',
+            'Budget' => 'nullable|numeric|min:0',
+            'ActualCost' => 'nullable|numeric|min:0',
+            'StartDate' => 'nullable|date',
+            'EndDate' => 'nullable|date|after_or_equal:StartDate',
+            'FacilityId' => [
+                'required',
+                'exists:facilities,FacilityId',
+                function ($attribute, $value, $fail) use ($request) {
+                    // BR: Facility must have compatible ServiceType
+                    $facility = Facility::find($value);
+                    if ($facility && $request->has('ProgramId')) {
+                        $program = \App\Models\Program::find($request->input('ProgramId'));
+                        if ($program) {
+                            $service = $program->service;
+                            if ($service && $facility->ServiceType !== $service->ServiceType) {
+                                $fail('The selected Facility ServiceType must match the Program Service ServiceType.');
+                            }
+                        }
+                    }
+                },
+            ],
+            'ProgramId' => 'required|exists:programs,ProgramId',
         ]);
 
         $project->update($validated);
-        return redirect()->route('projects.show', $project)->with('success', 'Project updated successfully');
+        return redirect()->route('projects.show', $project);
     }
 
     public function getDependencies(Project $project)
@@ -253,33 +329,16 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, Project $project)
+    public function destroy(Project $project)
     {
-        $deleteAction = $request->input('delete_action', 'cascade');
-        
-        // Count assignments before deletion for success message
-        $participantCount = $project->participants()->count();
-        $equipmentCount = $project->equipment()->count();
-        
-        // The database has cascade delete configured on the foreign keys,
-        // so participant and equipment assignments will be automatically removed
-        // when the project is deleted. No need to manually detach.
-        
-        $project->delete();
-        
-        $message = 'Project deleted successfully';
-        if ($participantCount > 0 || $equipmentCount > 0) {
-            $removedItems = [];
-            if ($participantCount > 0) {
-                $removedItems[] = "{$participantCount} participant " . ($participantCount === 1 ? 'assignment' : 'assignments');
-            }
-            if ($equipmentCount > 0) {
-                $removedItems[] = "{$equipmentCount} equipment " . ($equipmentCount === 1 ? 'assignment' : 'assignments');
-            }
-            $message .= '. Removed ' . implode(' and ', $removedItems) . '.';
+        // BR: Project must have at least 1 Participant (team tracking)
+        if ($project->participants()->count() === 0) {
+            return redirect()->route('projects.index')
+                ->with('error', 'Cannot delete Project without Participants; add team members first.');
         }
-        
-        return redirect()->route('projects.index')->with('success', $message);
+
+        $project->delete();
+        return redirect()->route('projects.index');
     }
 
     public function attachEquipment(Request $request, Project $project, Equipment $equipment)

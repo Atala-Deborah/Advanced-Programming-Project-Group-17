@@ -21,10 +21,36 @@ class ProgramController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'Name' => 'required|string|max:255',
-            'Description' => 'nullable|string',
-            'NationalAlignment' => 'nullable|in:NDPIII,Roadmap,4IR',
-            'FocusAreas' => 'nullable|in:IoT,Automation,Renewable Energy,Biotechnology,AI/ML,Robotics',
+            'Name' => 'required|string|max:255|unique:programs,Name',
+            'Description' => 'required|string',
+            'NationalAlignment' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Rule: When FocusAreas is non-empty, NationalAlignment must reference at least one valid token
+                    if (!empty($request->FocusAreas) && empty($value)) {
+                        $fail('Program.NationalAlignment must include at least one recognized alignment when FocusAreas are specified.');
+                    }
+                    
+                    // Validate that at least one recognized token is present
+                    if (!empty($value)) {
+                        $validTokens = ['NDPIII', 'DigitalRoadmap2023_2028', '4IR', 'Roadmap'];
+                        $hasValidToken = false;
+                        
+                        foreach ($validTokens as $token) {
+                            if (stripos($value, $token) !== false) {
+                                $hasValidToken = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!$hasValidToken) {
+                            $fail('Program.NationalAlignment must include at least one recognized alignment (NDPIII, DigitalRoadmap2023_2028, 4IR).');
+                        }
+                    }
+                },
+            ],
+            'FocusAreas' => 'nullable|string',
             'Phases' => 'nullable|in:Cross-Skilling,Collaboration,Technical Skills,Prototyping,Commercialization',
         ]);
 
@@ -47,10 +73,36 @@ class ProgramController extends Controller
     public function update(Request $request, Program $program)
     {
         $validated = $request->validate([
-            'Name' => 'required|string|max:255',
-            'Description' => 'nullable|string',
-            'NationalAlignment' => 'nullable|in:NDPIII,Roadmap,4IR',
-            'FocusAreas' => 'nullable|in:IoT,Automation,Renewable Energy,Biotechnology,AI/ML,Robotics',
+            'Name' => 'required|string|max:255|unique:programs,Name,' . $program->ProgramId . ',ProgramId',
+            'Description' => 'required|string',
+            'NationalAlignment' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Rule: When FocusAreas is non-empty, NationalAlignment must reference at least one valid token
+                    if (!empty($request->FocusAreas) && empty($value)) {
+                        $fail('Program.NationalAlignment must include at least one recognized alignment when FocusAreas are specified.');
+                    }
+                    
+                    // Validate that at least one recognized token is present
+                    if (!empty($value)) {
+                        $validTokens = ['NDPIII', 'DigitalRoadmap2023_2028', '4IR', 'Roadmap'];
+                        $hasValidToken = false;
+                        
+                        foreach ($validTokens as $token) {
+                            if (stripos($value, $token) !== false) {
+                                $hasValidToken = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!$hasValidToken) {
+                            $fail('Program.NationalAlignment must include at least one recognized alignment (NDPIII, DigitalRoadmap2023_2028, 4IR).');
+                        }
+                    }
+                },
+            ],
+            'FocusAreas' => 'nullable|string',
             'Phases' => 'nullable|in:Cross-Skilling,Collaboration,Technical Skills,Prototyping,Commercialization',
         ]);
 
@@ -62,6 +114,12 @@ class ProgramController extends Controller
 
     public function destroy(Program $program)
     {
+        // Business Rule: Lifecycle Protection - Programs cannot be deleted if they have associated Projects
+        if ($program->projects()->exists()) {
+            return redirect()->route('programs.index')
+                ->with('error', 'Program has Projects; archive or reassign before delete.');
+        }
+
         $program->delete();
 
         return redirect()->route('programs.index')
