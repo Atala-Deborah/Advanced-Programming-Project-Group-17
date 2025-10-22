@@ -59,16 +59,12 @@
                             <dd class="mt-1 text-sm text-gray-900">{{ $program->FocusAreas ?? 'N/A' }}</dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Phases</dt>
+                            <dt class="text-sm font-medium text-gray-500">Current Phase</dt>
                             <dd class="mt-1">
-                                @if(is_array($program->Phases) && count($program->Phases) > 0)
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach($program->Phases as $phase)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                {{ $phase }}
-                                            </span>
-                                        @endforeach
-                                    </div>
+                                @if($program->Phases)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {{ $program->Phases }}
+                                    </span>
                                 @else
                                     <span class="text-sm text-gray-900">N/A</span>
                                 @endif
@@ -98,7 +94,7 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <a href="{{ route('projects.show', $project->ProjectId) }}" class="text-blue-600 hover:text-blue-900">
-                                            {{ $project->Name }}
+                                            {{ $project->Title }}
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">

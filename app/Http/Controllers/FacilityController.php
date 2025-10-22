@@ -57,12 +57,32 @@ class FacilityController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'Name' => 'required|string|max:255',
+            'Name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    // BR: Facility.Name + Location must be unique composite
+                    $exists = Facility::where('Name', $value)
+                        ->where('Location', $request->Location)
+                        ->exists();
+                    if ($exists) {
+                        $fail('The combination of Name and Location must be unique.');
+                    }
+                },
+            ],
             'Description' => 'nullable|string',
             'Location' => 'required|string|max:255',
             'PartnerOrganization' => 'nullable|string|max:255',
             'FacilityType' => 'required|string|in:Lab,Workshop,Testing Center',
-            'Capabilities' => 'nullable|string',
+            'Capabilities' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    // BR: Capabilities required if Services or Equipment exist
+                    // Note: For new facility, this will be checked on subsequent updates
+                },
+            ],
         ]);
 
         Facility::create($validated);
@@ -84,12 +104,37 @@ class FacilityController extends Controller
     public function update(Request $request, Facility $facility)
     {
         $validated = $request->validate([
-            'Name' => 'required|string|max:255',
+            'Name' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request, $facility) {
+                    // BR: Facility.Name + Location must be unique composite
+                    $exists = Facility::where('Name', $value)
+                        ->where('Location', $request->Location)
+                        ->where('FacilityId', '!=', $facility->FacilityId)
+                        ->exists();
+                    if ($exists) {
+                        $fail('The combination of Name and Location must be unique.');
+                    }
+                },
+            ],
             'Description' => 'nullable|string',
             'Location' => 'required|string|max:255',
             'PartnerOrganization' => 'nullable|string|max:255',
             'FacilityType' => 'required|string|in:Lab,Workshop,Testing Center',
-            'Capabilities' => 'nullable|string',
+            'Capabilities' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($facility) {
+                    // BR: Capabilities required if Services or Equipment exist
+                    if (empty($value)) {
+                        if ($facility->services()->exists() || $facility->equipment()->exists()) {
+                            $fail('Capabilities are required when Services or Equipment are associated with this Facility.');
+                        }
+                    }
+                },
+            ],
         ]);
 
         $facility->update($validated);
@@ -163,40 +208,26 @@ class FacilityController extends Controller
 
     public function destroy(Request $request, Facility $facility)
     {
-        $deleteAction = $request->input('delete_action', 'cascade');
-        
-        // Handle dependencies
-        if ($facility->projects()->exists() || $facility->equipment()->exists() || $facility->services()->exists()) {
-            if ($deleteAction === 'reassign') {
-                $reassignTo = $request->input('reassign_to');
-                $newFacility = Facility::find($reassignTo);
+        // BR: Cannot delete Facility if Projects, Equipment, or Services exist
+        // Must prevent deletion instead of cascade/reassign
+        if ($facility->projects()->exists()) {
+            return redirect()->route('facilities.index')
+                ->with('error', 'Cannot delete Facility with associated Projects. Reassign or archive Projects first.');
+        }
 
-                if (!$newFacility) {
-                    return redirect()->route('facilities.index')
-                        ->with('error', 'Selected facility for reassignment not found.');
-                }
+        if ($facility->equipment()->exists()) {
+            return redirect()->route('facilities.index')
+                ->with('error', 'Cannot delete Facility with associated Equipment. Reassign Equipment first.');
+        }
 
-                // Reassign all dependencies to the new facility
-                $facility->projects()->update(['FacilityId' => $reassignTo]);
-                $facility->equipment()->update(['FacilityId' => $reassignTo]);
-                $facility->services()->update(['FacilityId' => $reassignTo]);
-                
-                $message = "Facility deleted successfully. Dependencies reassigned to {$newFacility->Name}.";
-            } else {
-                // Cascade delete - delete all dependencies
-                $facility->projects()->delete();
-                $facility->equipment()->delete();
-                $facility->services()->delete();
-                
-                $message = "Facility and all associated items deleted successfully.";
-            }
-        } else {
-            $message = "Facility deleted successfully.";
+        if ($facility->services()->exists()) {
+            return redirect()->route('facilities.index')
+                ->with('error', 'Cannot delete Facility with associated Services. Reassign Services first.');
         }
 
         $facility->delete();
 
         return redirect()->route('facilities.index')
-            ->with('success', $message);
+            ->with('success', 'Facility deleted successfully.');
     }
 }

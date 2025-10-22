@@ -31,6 +31,14 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong>⚠️ Error:</strong> {{ session('error') }}
+            </div>
+        </div>
+    @endif
+
     <div class="px-4 py-5 sm:p-6">
         @if($programs->count() > 0)
             <div class="overflow-x-auto">

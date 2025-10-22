@@ -276,8 +276,8 @@ class ProjectTest extends TestCase
     /** @test */
     public function it_validates_facility_compatibility_concept(): void
     {
-        // This test demonstrates the business logic for facility compatibility
-        // In a real implementation, you'd check if facility capabilities match project requirements
+        // business logic for facility compatibility
+        // In a real implementation, we'd check if facility capabilities match project requirements
 
         $facility = Facility::factory()->create([
             'Capabilities' => 'Prototyping,Testing,3D Printing'

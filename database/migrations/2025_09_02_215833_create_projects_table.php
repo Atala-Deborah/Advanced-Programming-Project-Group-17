@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id('ProjectId');
-            $table->unsignedBigInteger('ProgramId')->nullable(); // Making it nullable for now as it's not in the form
+            $table->unsignedBigInteger('ProgramId'); // Required per BR7: Projects must belong to a program
             $table->unsignedBigInteger('FacilityId');
             $table->string('Title');
             $table->enum('Status', ['Planning', 'Active', 'Completed', 'On Hold']);

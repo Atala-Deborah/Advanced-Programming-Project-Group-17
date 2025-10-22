@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
     <!-- Header Section -->
-    <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-8 sm:px-6 lg:px-8">
+    <div class="bg-gradient-to-r from-[#070600] to-blue-800 text-white px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="flex items-center">
                 <a href="{{ route('equipment.show', $equipment) }}" 
@@ -104,7 +104,9 @@
                             <option value="">Select support phase</option>
                             <option value="Training" {{ old('SupportPhase', $equipment->SupportPhase) === 'Training' ? 'selected' : '' }}>Training</option>
                             <option value="Prototyping" {{ old('SupportPhase', $equipment->SupportPhase) === 'Prototyping' ? 'selected' : '' }}>Prototyping</option>
+                            <option value="Testing" {{ old('SupportPhase', $equipment->SupportPhase) === 'Testing' ? 'selected' : '' }}>Testing</option>
                         </select>
+                        <p class="mt-2 text-sm text-gray-500">Electronics equipment must support Prototyping or Testing (not Training only)</p>
                         @error('SupportPhase')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -112,13 +114,13 @@
                     
                     <!-- Capabilities -->
                     <div>
-                        <label for="Capabilities" class="block text-sm font-medium text-gray-700">Capabilities <span class="text-red-500">*</span></label>
+                        <label for="Capabilities" class="block text-sm font-medium text-gray-700">Capabilities</label>
                         <textarea name="Capabilities" 
                                   id="Capabilities" 
-                                  rows="4" 
-                                  required
+                                  rows="4"
                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm @error('Capabilities') border-red-300 @enderror"
                                   placeholder="Describe what this equipment can do, its specifications, and key features">{{ old('Capabilities', $equipment->Capabilities) }}</textarea>
+                        <p class="mt-2 text-sm text-gray-500">Optional: Describe equipment capabilities and specifications</p>
                         @error('Capabilities')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror

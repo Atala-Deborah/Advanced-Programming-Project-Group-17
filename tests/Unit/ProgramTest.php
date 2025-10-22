@@ -70,12 +70,8 @@ class ProgramTest extends TestCase
             ['Name' => 'required|unique:programs,Name']
         );
 
-        // Note: Laravel's unique validation is case-sensitive by default
-        // For case-insensitive uniqueness, you'd need a custom validation rule
-        // This test demonstrates the validation structure
         $this->assertFalse($validator->fails());
         
-        // But if we try exact match
         $validator = Validator::make(
             ['Name' => 'Innovation Program'],
             ['Name' => 'required|unique:programs,Name']
@@ -159,8 +155,6 @@ class ProgramTest extends TestCase
         
         $this->assertTrue($hasProjects, 'Program should have associated projects');
 
-        // In a real implementation, you would have a policy or observer
-        // that prevents deletion. This test validates the business logic.
         if ($hasProjects) {
             // Simulate the protection logic
             $canDelete = false;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use App\Models\Facility;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller
@@ -76,7 +77,12 @@ class ServiceController extends Controller
     {
         $request->validate([
             'FacilityId' => 'required|exists:facilities,FacilityId',
-            'Name' => 'required|string|max:255',
+            'Name' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:services,Name', // BR: Service.Name must be unique
+            ],
             'Description' => 'nullable|string',
             'Category' => 'required|in:Machining,Testing,Training',
             'SkillType' => 'required|in:Hardware,Software,Integration',
@@ -90,6 +96,7 @@ class ServiceController extends Controller
     // Show details of a service
     public function show(Service $service)
     {
+        $service->load('facility');
         return view('services.show', compact('service'));
     }
 
@@ -105,7 +112,12 @@ class ServiceController extends Controller
     {
         $request->validate([
             'FacilityId' => 'sometimes|exists:facilities,FacilityId',
-            'Name' => 'sometimes|string|max:255',
+            'Name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                'unique:services,Name,' . $service->ServiceId . ',ServiceId', // BR: Service.Name must be unique
+            ],
             'Description' => 'nullable|string',
             'Category' => 'sometimes|in:Machining,Testing,Training',
             'SkillType' => 'sometimes|in:Hardware,Software,Integration',
@@ -119,6 +131,16 @@ class ServiceController extends Controller
     // Delete a service
     public function destroy(Service $service)
     {
+        // BR9: Cannot delete Service if any Project at that Facility references its Category in TestingRequirements
+        $projectsUsingService = Project::where('FacilityId', $service->FacilityId)
+            ->where('TestingRequirements', 'like', '%' . $service->Category . '%')
+            ->exists();
+            
+        if ($projectsUsingService) {
+            return redirect()->route('services.index')
+                ->with('error', 'Cannot delete this service. It is referenced in project testing requirements at this facility.');
+        }
+
         $service->delete();
         return redirect()->route('services.index')->with('success', 'Service deleted successfully!');
     }

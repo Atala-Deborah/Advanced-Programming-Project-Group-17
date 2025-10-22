@@ -31,6 +31,7 @@ Route::delete('/projects/{project}/participants/{participant}', [ProjectParticip
 // Equipment
 Route::resource('equipment', EquipmentController::class);
 Route::get('facility/{facilityId}/equipment', [EquipmentController::class, 'facilityEquipment'])->name('equipment.facility');
+Route::get('/projects/{project}/equipment/manage', [ProjectController::class, 'manageEquipment'])->name('project.equipment.manage');
 Route::post('/projects/{project}/equipment/{equipment}', [ProjectController::class, 'attachEquipment'])->name('projects.equipment.attach');
 Route::delete('/projects/{project}/equipment/{equipment}', [ProjectController::class, 'detachEquipment'])->name('projects.equipment.detach');
 
