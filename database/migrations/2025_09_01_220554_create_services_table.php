@@ -19,6 +19,9 @@ return new class extends Migration
 
             // Add foreign key constraint with cascade delete
             $table->foreign('FacilityId')->references('FacilityId')->on('facilities')->onDelete('cascade');
+
+            // Unique constraint for Name within FacilityId
+            $table->unique(['FacilityId', 'Name']);
         });
     }
 
