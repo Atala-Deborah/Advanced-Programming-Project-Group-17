@@ -374,18 +374,33 @@ class ProjectController extends Controller
     {
         if (!$project->equipment->contains($equipment->EquipmentId)) {
             $project->equipment()->attach($equipment->EquipmentId);
-            return redirect()->route('projects.show', $project)
-                ->with('success', 'Equipment attached successfully');
+            return redirect()->route('project.equipment.manage', $project->ProjectId)
+                ->with('success', "Equipment '{$equipment->Name}' assigned successfully");
         }
         
-        return redirect()->route('projects.show', $project)
+        return redirect()->route('project.equipment.manage', $project->ProjectId)
             ->with('error', 'Equipment is already attached to this project');
     }
 
     public function detachEquipment(Project $project, Equipment $equipment)
     {
         $project->equipment()->detach($equipment->EquipmentId);
-        return redirect()->route('projects.show', $project)
-            ->with('success', 'Equipment removed successfully');
+        return redirect()->route('project.equipment.manage', $project->ProjectId)
+            ->with('success', "Equipment '{$equipment->Name}' removed successfully");
+    }
+
+    public function manageEquipment(Project $project)
+    {
+        // Load project with equipment
+        $project->load('equipment', 'facility');
+        
+        // Get equipment from the same facility that aren't already assigned to this project
+        $assignedEquipmentIds = $project->equipment->pluck('EquipmentId')->toArray();
+        
+        $availableEquipment = Equipment::where('FacilityId', $project->FacilityId)
+            ->whereNotIn('EquipmentId', $assignedEquipmentIds)
+            ->get();
+
+        return view('project-equipment.manage', compact('project', 'availableEquipment'));
     }
 }

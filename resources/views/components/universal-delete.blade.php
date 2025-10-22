@@ -51,6 +51,10 @@ function removeParticipant(participantId, participantName) {
     universalDelete('participant', participantId, participantName, `#remove-participant-${participantId}`);
 }
 
+function removeEquipment(equipmentId, equipmentName) {
+    universalDelete('equipment', equipmentId, equipmentName, `#remove-equipment-${equipmentId}`);
+}
+
 function deleteFacility(facilityId, facilityName) {
     universalDelete('facility', facilityId, facilityName);
 }
