@@ -173,29 +173,44 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'ProgramId' => [
+                'required',
+                'exists:programs,ProgramId',
+            ],
             'Title' => [
                 'required',
                 'string',
-                'max:100',
+                'max:255',
                 function ($attribute, $value, $fail) use ($request) {
-                    // BR: Title must be unique within Program
+                    // BR12: Title must be unique within Program
                     if ($request->has('ProgramId')) {
                         $exists = Project::where('ProgramId', $request->input('ProgramId'))
                             ->where('Title', $value)
                             ->exists();
                         if ($exists) {
-                            $fail('The Title must be unique within the Program.');
+                            $fail('A project with this title already exists in the selected program.');
                         }
                     }
                 },
             ],
-            'NatureOfProject' => 'required|in:Small,Large,Other',
-            'Status' => 'required|in:Draft,Active,Completed,Archived',
-            'Phases' => 'required|in:Planning,Execution,Monitoring,Closure',
-            'Budget' => 'nullable|numeric|min:0',
-            'ActualCost' => 'nullable|numeric|min:0',
-            'StartDate' => 'nullable|date',
+            'Description' => 'required|string',
+            'NatureOfProject' => 'required|in:Research,Prototype,Applied work',
+            'Status' => [
+                'required',
+                'in:Planning,Active,Completed,On Hold',
+                function ($attribute, $value, $fail) {
+                    // BR20: Cannot create project with Completed status (no outcomes exist yet)
+                    if ($value === 'Completed') {
+                        $fail('Cannot create a project with Completed status. Please add outcomes after creating the project.');
+                    }
+                },
+            ],
+            'InnovationFocus' => 'nullable|string|max:255',
+            'PrototypeStage' => 'required|in:Concept,Prototype,MVP,Market Launch',
+            'StartDate' => 'required|date',
             'EndDate' => 'nullable|date|after_or_equal:StartDate',
+            'TestingRequirements' => 'nullable|string',
+            'CommercializationPlan' => 'nullable|string',
             'FacilityId' => [
                 'required',
                 'exists:facilities,FacilityId',
@@ -236,39 +251,45 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $validated = $request->validate([
+            'ProgramId' => [
+                'required',
+                'exists:programs,ProgramId',
+            ],
             'Title' => [
                 'required',
                 'string',
-                'max:100',
+                'max:255',
                 function ($attribute, $value, $fail) use ($request, $project) {
-                    // BR: Title must be unique within Program
+                    // BR12: Title must be unique within Program
                     if ($request->has('ProgramId')) {
                         $exists = Project::where('ProgramId', $request->input('ProgramId'))
                             ->where('Title', $value)
                             ->where('ProjectId', '!=', $project->ProjectId)
                             ->exists();
                         if ($exists) {
-                            $fail('The Title must be unique within the Program.');
+                            $fail('A project with this title already exists in the selected program.');
                         }
                     }
                 },
             ],
-            'NatureOfProject' => 'required|in:Small,Large,Other',
+            'Description' => 'required|string',
+            'NatureOfProject' => 'required|in:Research,Prototype,Applied work',
             'Status' => [
                 'required',
-                'in:Draft,Active,Completed,Archived',
+                'in:Planning,Active,Completed,On Hold',
                 function ($attribute, $value, $fail) use ($project) {
-                    // BR: If Status is Completed, must have at least one Outcome
+                    // BR20: If Status is Completed, must have at least one Outcome
                     if ($value === 'Completed' && $project->outcomes()->count() === 0) {
-                        $fail('Cannot set Status to Completed without at least one Outcome.');
+                        $fail('Cannot mark project as Completed without at least one documented outcome. Please add an outcome first.');
                     }
                 },
             ],
-            'Phases' => 'required|in:Planning,Execution,Monitoring,Closure',
-            'Budget' => 'nullable|numeric|min:0',
-            'ActualCost' => 'nullable|numeric|min:0',
-            'StartDate' => 'nullable|date',
+            'InnovationFocus' => 'nullable|string|max:255',
+            'PrototypeStage' => 'required|in:Concept,Prototype,MVP,Market Launch',
+            'StartDate' => 'required|date',
             'EndDate' => 'nullable|date|after_or_equal:StartDate',
+            'TestingRequirements' => 'nullable|string',
+            'CommercializationPlan' => 'nullable|string',
             'FacilityId' => [
                 'required',
                 'exists:facilities,FacilityId',
@@ -325,20 +346,28 @@ class ProjectController extends Controller
         
         return response()->json([
             'dependencies' => $dependencies,
-            'reassignOptions' => [] // Projects don't typically get reassigned
+            'reassignOptions' => []
         ]);
     }
 
     public function destroy(Project $project)
     {
-        // BR: Project must have at least 1 Participant (team tracking)
-        if ($project->participants()->count() === 0) {
-            return redirect()->route('projects.index')
-                ->with('error', 'Cannot delete Project without Participants; add team members first.');
-        }
-
+        // Get project title for success message
+        $projectTitle = $project->Title;
+        $participantsCount = $project->participants()->count();
+        
+        // Delete project (cascade will remove participant assignments via database)
         $project->delete();
-        return redirect()->route('projects.index');
+        
+        // Build success message
+        $message = "Project '{$projectTitle}' deleted successfully.";
+        
+        if ($participantsCount > 0) {
+            $message .= " {$participantsCount} participant assignment(s) were removed.";
+        }
+        
+        return redirect()->route('projects.index')
+            ->with('success', $message);
     }
 
     public function attachEquipment(Request $request, Project $project, Equipment $equipment)

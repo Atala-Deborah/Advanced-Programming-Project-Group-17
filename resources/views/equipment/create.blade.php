@@ -64,8 +64,9 @@
                 <!-- Capabilities -->
                 <div>
                     <label for="Capabilities" class="block text-sm font-medium text-gray-700">Capabilities</label>
-                    <textarea name="Capabilities" id="Capabilities" rows="2" required
+                    <textarea name="Capabilities" id="Capabilities" rows="2"
                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ old('Capabilities') }}</textarea>
+                    <p class="mt-1 text-xs text-gray-500">Optional: Describe equipment capabilities</p>
                     @error('Capabilities')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -92,7 +93,11 @@
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                         <option value="Training" {{ old('SupportPhase') == 'Training' ? 'selected' : '' }}>Training</option>
                         <option value="Prototyping" {{ old('SupportPhase') == 'Prototyping' ? 'selected' : '' }}>Prototyping</option>
+                        <option value="Testing" {{ old('SupportPhase') == 'Testing' ? 'selected' : '' }}>Testing</option>
                     </select>
+                    <p class="mt-1 text-xs text-yellow-600" id="electronics-warning" style="display: none;">
+                        ⚠️ Electronics equipment must support Prototyping or Testing phase (not Training only)
+                    </p>
                     @error('SupportPhase')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -111,4 +116,28 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const usageDomain = document.getElementById('UsageDomain');
+    const supportPhase = document.getElementById('SupportPhase');
+    const warning = document.getElementById('electronics-warning');
+    
+    function checkElectronicsRule() {
+        if (usageDomain.value === 'Electronics') {
+            warning.style.display = 'block';
+            // Electronics cannot be Training only - must be Prototyping or Testing
+            if (supportPhase.value === 'Training') {
+                supportPhase.value = 'Prototyping';
+            }
+        } else {
+            warning.style.display = 'none';
+        }
+    }
+    
+    usageDomain.addEventListener('change', checkElectronicsRule);
+    supportPhase.addEventListener('change', checkElectronicsRule);
+    checkElectronicsRule(); // Initial check
+});
+</script>
 @endsection

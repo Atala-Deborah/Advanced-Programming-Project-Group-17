@@ -97,19 +97,19 @@ class EquipmentController extends Controller
         $validated = $request->validate([
             'FacilityId' => 'required|exists:facilities,FacilityId',
             'Name' => 'required|string|max:255',
-            'Capabilities' => 'required|string',
+            'Capabilities' => 'nullable|string',
             'Description' => 'nullable|string',
             'InventoryCode' => 'required|string|unique:equipment,InventoryCode',
             'UsageDomain' => 'required|string|in:Electronics,Mechanical,IoT',
             'SupportPhase' => [
                 'required',
                 'string',
-                'in:Training,Prototyping',
+                'in:Training,Prototyping,Testing',
                 function ($attribute, $value, $fail) use ($request) {
                     // BR: UsageDomain–SupportPhase Coherence
-                    // If UsageDomain = "Electronics", then SupportPhase must be "Prototyping"
+                    // If UsageDomain = "Electronics", then SupportPhase must include "Prototyping" or "Testing" (not Training only)
                     if ($request->UsageDomain === 'Electronics' && $value === 'Training') {
-                        $fail('Electronics equipment must support Prototyping phase, not Training.');
+                        $fail('Electronics equipment must support Prototyping or Testing phase, not Training only.');
                     }
                 },
             ],
@@ -132,19 +132,19 @@ class EquipmentController extends Controller
         $validated = $request->validate([
             'FacilityId' => 'required|exists:facilities,FacilityId',
             'Name' => 'required|string|max:255',
-            'Capabilities' => 'required|string',
+            'Capabilities' => 'nullable|string',
             'Description' => 'nullable|string',
             'InventoryCode' => 'required|unique:equipment,InventoryCode,' . $equipment->EquipmentId . ',EquipmentId',
             'UsageDomain' => 'required|string|in:Electronics,Mechanical,IoT',
             'SupportPhase' => [
                 'required',
                 'string',
-                'in:Training,Prototyping',
+                'in:Training,Prototyping,Testing',
                 function ($attribute, $value, $fail) use ($request) {
                     // BR: UsageDomain–SupportPhase Coherence
-                    // If UsageDomain = "Electronics", then SupportPhase must be "Prototyping"
+                    // If UsageDomain = "Electronics", then SupportPhase must include "Prototyping" or "Testing" (not Training only)
                     if ($request->UsageDomain === 'Electronics' && $value === 'Training') {
-                        $fail('Electronics equipment must support Prototyping phase, not Training.');
+                        $fail('Electronics equipment must support Prototyping or Testing phase, not Training only.');
                     }
                 },
             ],

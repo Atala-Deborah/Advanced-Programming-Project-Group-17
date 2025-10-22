@@ -17,6 +17,18 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if(session('warning'))
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+                <strong>⚠️ Warning:</strong> {{ session('warning') }}
+            </div>
+        @endif
+
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
             <div class="p-6">
                 <div class="grid grid-cols-2 gap-6">

@@ -117,7 +117,7 @@ class ProgramController extends Controller
         // Business Rule: Lifecycle Protection - Programs cannot be deleted if they have associated Projects
         if ($program->projects()->exists()) {
             return redirect()->route('programs.index')
-                ->with('error', 'Program has Projects; archive or reassign before delete.');
+                ->with('error', 'Program has Projects; Please reassign before delete.');
         }
 
         $program->delete();

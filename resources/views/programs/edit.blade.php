@@ -15,30 +15,22 @@
             @method('PUT')
             
             <div class="mb-4">
-                <label for="Name" class="block text-sm font-medium text-gray-700">Name</label>
+                <label for="Name" class="block text-sm font-medium text-gray-700">
+                    Name <span class="text-red-500">*</span>
+                </label>
                 <input type="text" name="Name" id="Name" value="{{ old('Name', $program->Name) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                <p class="mt-1 text-sm text-gray-500">Must be unique across all programs</p>
                 @error('Name')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
             <div class="mb-4">
-                <label for="Description" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="Description" id="Description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">{{ old('Description', $program->Description) }}</textarea>
+                <label for="Description" class="block text-sm font-medium text-gray-700">
+                    Description <span class="text-red-500">*</span>
+                </label>
+                <textarea name="Description" id="Description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>{{ old('Description', $program->Description) }}</textarea>
                 @error('Description')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label for="NationalAlignment" class="block text-sm font-medium text-gray-700">National Alignment</label>
-                <select name="NationalAlignment" id="NationalAlignment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    <option value="">Select National Alignment</option>
-                    <option value="NDPIII" {{ old('NationalAlignment', $program->NationalAlignment) == 'NDPIII' ? 'selected' : '' }}>NDPIII</option>
-                    <option value="Roadmap" {{ old('NationalAlignment', $program->NationalAlignment) == 'Roadmap' ? 'selected' : '' }}>Roadmap</option>
-                    <option value="4IR" {{ old('NationalAlignment', $program->NationalAlignment) == '4IR' ? 'selected' : '' }}>4IR</option>
-                </select>
-                @error('NationalAlignment')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -55,6 +47,26 @@
                     <option value="Robotics" {{ old('FocusAreas', $program->FocusAreas) == 'Robotics' ? 'selected' : '' }}>Robotics</option>
                 </select>
                 @error('FocusAreas')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="NationalAlignment" class="block text-sm font-medium text-gray-700">
+                    National Alignment <span class="text-red-500" id="alignment-required" style="display: none;">*</span>
+                    <span class="ml-1 text-gray-500 cursor-help" title="Required when Focus Areas is specified. Must include at least one recognized alignment.">ⓘ</span>
+                </label>
+                <select name="NationalAlignment" id="NationalAlignment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('NationalAlignment') border-red-500 @enderror">
+                    <option value="">Select National Alignment</option>
+                    <option value="NDPIII" {{ old('NationalAlignment', $program->NationalAlignment) == 'NDPIII' ? 'selected' : '' }}>NDPIII (National Development Plan III)</option>
+                    <option value="DigitalRoadmap2023_2028" {{ old('NationalAlignment', $program->NationalAlignment) == 'DigitalRoadmap2023_2028' ? 'selected' : '' }}>Digital Roadmap 2023-2028</option>
+                    <option value="4IR" {{ old('NationalAlignment', $program->NationalAlignment) == '4IR' ? 'selected' : '' }}>4IR (Fourth Industrial Revolution)</option>
+                    <option value="NDPIII, DigitalRoadmap2023_2028" {{ old('NationalAlignment', $program->NationalAlignment) == 'NDPIII, DigitalRoadmap2023_2028' ? 'selected' : '' }}>NDPIII & Digital Roadmap</option>
+                    <option value="NDPIII, 4IR" {{ old('NationalAlignment', $program->NationalAlignment) == 'NDPIII, 4IR' ? 'selected' : '' }}>NDPIII & 4IR</option>
+                    <option value="DigitalRoadmap2023_2028, 4IR" {{ old('NationalAlignment', $program->NationalAlignment) == 'DigitalRoadmap2023_2028, 4IR' ? 'selected' : '' }}>Digital Roadmap & 4IR</option>
+                    <option value="NDPIII, DigitalRoadmap2023_2028, 4IR" {{ old('NationalAlignment', $program->NationalAlignment) == 'NDPIII, DigitalRoadmap2023_2028, 4IR' ? 'selected' : '' }}>All Three Alignments</option>
+                </select>
+                @error('NationalAlignment')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -85,4 +97,25 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const focusAreasSelect = document.getElementById('FocusAreas');
+    const alignmentInput = document.getElementById('NationalAlignment');
+    const alignmentRequired = document.getElementById('alignment-required');
+    
+    function updateAlignmentRequirement() {
+        if (focusAreasSelect.value) {
+            alignmentInput.required = true;
+            alignmentRequired.style.display = 'inline';
+        } else {
+            alignmentInput.required = false;
+            alignmentRequired.style.display = 'none';
+        }
+    }
+    
+    focusAreasSelect.addEventListener('change', updateAlignmentRequirement);
+    updateAlignmentRequirement(); // Initial check
+});
+</script>
 @endsection
