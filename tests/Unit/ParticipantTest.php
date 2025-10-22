@@ -129,13 +129,7 @@ class ParticipantTest extends TestCase
             ['Email' => 'required|email|unique:participants,Email']
         );
 
-        // Note: Laravel's unique validation is case-sensitive by default
-        // For case-insensitive email uniqueness, you would need a custom rule
-        // This test demonstrates the validation structure
         $this->assertFalse($validator->fails()); // Will pass with default Laravel validation
-
-        // In production, you'd implement custom validation for case-insensitive emails
-        // using something like: Rule::unique('participants', 'Email')->where(...)
     }
 
     /** @test */
