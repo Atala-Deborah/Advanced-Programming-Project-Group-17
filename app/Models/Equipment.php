@@ -15,6 +15,9 @@ class Equipment extends Model
     protected $fillable = [
         'FacilityId', 'Name', 'Capabilities', 'Description', 'InventoryCode', 'UsageDomain', 'SupportPhase'
     ];
+    protected $casts = [
+    'SupportPhase' => 'array',
+    ];
 
     public function facility()
     {

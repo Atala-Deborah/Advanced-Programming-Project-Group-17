@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             FacilitySeeder::class,
             ProgramSeeder::class,
             ProjectSeeder::class,
+            EquipmentSeeder::class,
         ]);
     }
 }

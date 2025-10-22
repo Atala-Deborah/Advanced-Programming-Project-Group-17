@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Equipment;
 use App\Models\Facility;
+use App\Models\Project;
 use Illuminate\Http\Request;
+use App\Http\Requests\EquipmentRequest;
+use Illuminate\Database\QueryException;
+
 
 class EquipmentController extends Controller
 {
@@ -92,21 +96,13 @@ class EquipmentController extends Controller
     }
 
     // Store new equipment
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'FacilityId' => 'required|exists:facilities,FacilityId',
-            'Name' => 'required|string|max:255',
-            'Capabilities' => 'required|string',
-            'Description' => 'nullable|string',
-            'InventoryCode' => 'required|string|unique:equipment,InventoryCode',
-            'UsageDomain' => 'required|string|in:Electronics,Mechanical,IoT',
-            'SupportPhase' => 'required|string|in:Training,Prototyping'
-        ]);
+    public function store(EquipmentRequest $request)
+{
+    Equipment::create($request->validated());
 
-        Equipment::create($validated);
-        return redirect()->route('equipment.index')->with('success', 'Equipment created successfully');
-    }
+    return redirect()->route('equipment.index')
+                     ->with('success', 'Equipment created successfully');
+}
 
     // Show edit form
     public function edit(Equipment $equipment)
@@ -133,10 +129,15 @@ class EquipmentController extends Controller
     }
 
     // Delete equipment
+
+
     public function destroy(Equipment $equipment)
     {
-        // Optional: Check if tied to active projects before deleting
-        $equipment->delete();
-        return redirect()->route('equipment.index')->with('success', 'Equipment deleted successfully');
+        try {
+            $equipment->delete();
+            return redirect()->back()->with('success', 'Equipment deleted successfully.');
+        } catch (QueryException $e) {
+            return redirect()->back()->withErrors(['delete' => 'Cannot delete equipment: it is referenced by an active project.']);
+        }
     }
 }
